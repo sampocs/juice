@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+
+  db:
+    container_name: juice-postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: juice
+      POSTGRES_USER: juice
+      POSTGRES_DB: juice
+    ports:
+      - '5432:5432'
+    volumes:
+      - ../data:/opt/juice_data
