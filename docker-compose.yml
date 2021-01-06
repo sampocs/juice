@@ -13,4 +13,4 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ../data:/opt/juice_data
+      - ./data:/opt/juice_data
