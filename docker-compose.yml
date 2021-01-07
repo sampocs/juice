@@ -14,3 +14,15 @@ services:
       - '5432:5432'
     volumes:
       - ./data:/opt/juice_data
+
+  api:
+    container_name: fastapi
+    build: 
+      context: ./docker-images
+      dockerfile: fastapi.dockerfile
+    ports:
+      - '8000:8000'
+    volumes: 
+      - ./api:/usr/local/src/api
+    working_dir: /usr/local/src/api
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0"]
