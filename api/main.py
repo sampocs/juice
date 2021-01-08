@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
-import crud, models, schemas
-from database import SessionLocal, engine
+from api import crud, models, schemas
+from api.database import SessionLocal, engine
 from typing import List
 
 models.Base.metadata.create_all(bind=engine)
