@@ -10,7 +10,7 @@ def connect_to_postgres():
     conn = psql.connect(
         dbname='juice',
         user='juice',
-        password=os.environ['JUICE_PASSWORD'],
+        password=os.environ['JUICE_DB_PASSWORD'],
         host='0.0.0.0',
         port=5432)
 

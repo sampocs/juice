@@ -1,9 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-# TODO: Better securtiy
-SQLALCHEMY_DATABASE_URI = "postgresql://juice:juice@db:5432/juice"
+JUICE_USER = os.environ['JUICE_DB_USER']
+JUICE_PASSWORD = os.environ['JUICE_DB_PASSWORD']
+SQLALCHEMY_DATABASE_URI = f"postgresql://{JUICE_USER}:{JUICE_PASSWORD}@db:5432/juice"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
