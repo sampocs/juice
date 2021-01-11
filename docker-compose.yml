@@ -1,5 +1,8 @@
 version: '3.1'
 
+volumes:
+  airflow-volume:
+
 services:
 
   db:
@@ -9,11 +12,9 @@ services:
     environment:
       POSTGRES_USER: ${JUICE_DB_USER}
       POSTGRES_PASSWORD: ${JUICE_DB_PASSWORD}
-      POSTGRES_DB: juice
+      POSTGRES_DB: ${JUICE_DB_NAME}
     ports:
       - '5432:5432'
-    volumes:
-      - ./data:/opt/juice_data
 
   api:
     container_name: fastapi
@@ -21,6 +22,11 @@ services:
       context: .
       dockerfile: ./docker-images/fastapi.dockerfile
     image: fastapi
+    restart: always
+    environment: 
+      JUICE_DB_NAME:
+      JUICE_DB_USER:
+      JUICE_DB_PASSWORD:
     ports:
       - '8000:8000'
     volumes:
@@ -47,18 +53,25 @@ services:
     image: apache/airflow:2.0.0
     restart: always
     environment: 
+      AIRFLOW_USERNAME:
+      AIRFLOW_EMAIL:
+      AIRFLOW_FIRSTNAME:
+      AIRFLOW_LASTNAME:
+      AIRFLOW_PASSWORD:
+      JUICE_DB_NAME: 
+      JUICE_DB_USER:
+      JUICE_DB_PASSWORD:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/airflow"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - ./airflow/data:/opt/airflow/data
+      - ./airflow/setup:/opt/airflow/setup
+      - ./database:/opt/airflow/dags/common/database
+      - airflow-volume:/opt/airflow
     entrypoint: sh -c
     command: >
-      "
-      airflow db init &&
-      airflow users create -u ${AIRFLOW_USERNAME} -e ${AIRFLOW_EMAIL} -f ${AIRFLOW_FIRSTNAME} -l ${AIRFLOW_LASTNAME} -p ${AIRFLOW_PASSWORD} -r Admin &&
-      airflow scheduler
-      "
+      "chmod +x /opt/airflow/setup/init.sh && /opt/airflow/setup/init.sh"
     depends_on: 
       - airflow-db
 
@@ -72,8 +85,8 @@ services:
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/airflow"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
     volumes:
-      - ./airflow/dags:/opt/airflow/dags
-      - ./airflow/data:/opt/airflow/data
-    command: webserver
+      - airflow-volume:/opt/airflow
+    command: webserver -D
     depends_on:
       - airflow-scheduler
+
