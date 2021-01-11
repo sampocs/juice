@@ -81,13 +81,41 @@ services:
     image: apache/airflow:2.0.0
     restart: always
     ports:
-      - '8080:8080'
+      - '8081:8081'
     environment: 
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@airflow-db:5432/airflow"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
     volumes:
       - airflow-volume:/opt/airflow
-    command: webserver -D
+    command: webserver --port 8081 -D
     depends_on:
       - airflow-scheduler
 
+  app:
+    container_name: flask
+    build: 
+      context: .
+      dockerfile: ./docker-images/flask.dockerfile
+    image: flask
+    restart: always
+    ports:
+      - '5000:5000'
+    expose: 
+      - 8080
+    volumes:
+      - ./flask:/app
+    working_dir: /app
+    command: ["python", "run.py"]
+    # command: ["uwsgi", "app.ini"]
+    depends_on: 
+      - api
+
+  nginx:
+    container_name: nginx
+    build: 
+      context: .
+      dockerfile: ./docker-images/nginx.dockerfile
+    image: nginx
+    restart: always
+    ports:
+      - '80:80'
