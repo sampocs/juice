@@ -73,6 +73,7 @@ services:
     command: >
       "chmod +x /opt/airflow/setup/init.sh && /opt/airflow/setup/init.sh"
     depends_on: 
+      - db
       - airflow-db
 
   airflow-webserver:
