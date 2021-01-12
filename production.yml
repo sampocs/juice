@@ -1,0 +1,13 @@
+services:
+  app:
+    command: ["uwsgi", "app.ini"]
+
+  nginx:
+    container_name: nginx
+    build: 
+      context: .
+      dockerfile: ./docker-images/nginx.dockerfile
+    image: nginx
+    restart: always
+    ports:
+      - '80:80'

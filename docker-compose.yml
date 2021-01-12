@@ -106,16 +106,6 @@ services:
       - ./flask:/app
     working_dir: /app
     command: ["python", "run.py"]
-    # command: ["uwsgi", "app.ini"]
     depends_on: 
       - api
 
-  nginx:
-    container_name: nginx
-    build: 
-      context: .
-      dockerfile: ./docker-images/nginx.dockerfile
-    image: nginx
-    restart: always
-    ports:
-      - '80:80'
