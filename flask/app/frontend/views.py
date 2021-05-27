@@ -1,10 +1,9 @@
 from flask import render_template, redirect, url_for
+from flask.templating import render_template_string
 from app import app
 
-SEASONS = [2018, 2019]
 
-def render_helper(page_name, **kwargs):
-    current_season = 2019
+def render_helper(page_name):
     current_week = 12
     template = f'{page_name}.html'
     past_weeks = range(1, current_week)
@@ -18,11 +17,16 @@ def render_helper(page_name, **kwargs):
 
 @app.route('/')
 def home():
-    return redirect(url_for(f'season'))
+    return redirect(url_for('season'))
 
 @app.route('/season')
 def season():
-    past_weeks = range(1, 9)
-    upcoming_weeks = range(9, 17)
-    return render_template('season.html', tab="season", past_weeks=past_weeks, upcoming_weeks=upcoming_weeks)
+    return render_helper('season')
 
+@app.route('/past/week=<week>')
+def past(week):
+    return render_helper('past')
+
+@app.route('/upcoming/week=<week>')
+def upcoming(week):
+    return render_helper('upcoming')

@@ -25,25 +25,15 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-4">
-        <a class="navbar-brand" style="font-size: 2.5em; padding-right: 30px;" href="#">
+        <a class="navbar-brand" style="font-size: 2.5em; padding-right: 30px; border-right: 1px solid #000; border-color: white;" href="/">
             Juice
         </a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item {{'active' if tab == 'home'}}">
-                    <a class="nav-link" href="">
-                        Home 
-                    </a>
-                </li>
                 <li class="nav-item dropdown {{'active' if tab == 'season'}}">
-                    <a class="nav-link" href="" role="button" data-toggle="dropdown">
+                    <a class="nav-link" href="/season" role="button">
                         Season  
                     </a>
-                    <div class="dropdown-menu">
-                        {% for week_num in past_weeks %}
-                        <a class="dropdown-item" href="past/week={{week_num}}">Week {{week_num}}</a>
-                        {% endfor %}
-                    </div>
                 </li>
                 <li class="nav-item dropdown {{'active' if tab == 'past'}}">
                     <a class="nav-link" href="" role="button" data-toggle="dropdown">
@@ -51,7 +41,7 @@
                     </a>
                     <div class="dropdown-menu">
                         {% for week_num in past_weeks %}
-                        <a class="dropdown-item" href="past/week={{week_num}}">Week {{week_num}}</a>
+                        <a class="dropdown-item" href="/past/week={{week_num}}">Week {{week_num}}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -61,7 +51,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% for week_num in upcoming_weeks %}
-                        <a class="dropdown-item" href="past/week={{week_num}}">Week {{week_num}}</a>
+                        <a class="dropdown-item" href="/upcoming/week={{week_num}}">Week {{week_num}}</a>
                         {% endfor %}
                     </div>
                 </li>
