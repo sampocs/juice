@@ -1,7 +1,8 @@
 # Juice
 NFL Dashboard
+**MVP in progress**
 
-## Pages
+## Pages (Tables)
 ### Season
 * All teams
 * Wins/Losses
@@ -33,7 +34,7 @@ NFL Dashboard
 ![Navigation](/images/navigation.png)
 
 ## Backend
-### Teams
+### Teams (fact) (static - manual upload)
 | Field       | Type |
 |-------------|------|
 | **team_id** | text |
@@ -44,7 +45,7 @@ NFL Dashboard
 | active      | bool |
 | pfr_name    | text |
 
-### Games
+### Games (fact) 
 | Field        | Type     |
 |--------------|----------|
 | **game_id**  | text     |
@@ -55,7 +56,7 @@ NFL Dashboard
 | away_team_id | text     |
 | has_pbp      | bool     |
 
-### PBP
+### PBP (fact)
 | Field        | Type |
 |--------------|------|
 | **game_id**  | text |
@@ -71,7 +72,7 @@ NFL Dashboard
 | yards_gained | int  |
 | penalty      | bool |
 
-### Roster (v1)
+### Roster (fact) (v1)
 | Field         | Type |
 |---------------|------|
 | **player_id** | text |
@@ -80,7 +81,7 @@ NFL Dashboard
 | number        | int  |
 | position      | text |
 
-### Lines 
+### Lines (fact)
 | Field       | Type     |
 |-------------|----------|
 | **game_id** | text     |
