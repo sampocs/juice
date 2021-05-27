@@ -1,5 +1,7 @@
 services:
   app:
+    expose: 
+      - 8080
     command: ["uwsgi", "app.ini"]
 
   nginx:

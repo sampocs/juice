@@ -100,8 +100,6 @@ services:
     restart: always
     ports:
       - '5000:5000'
-    expose: 
-      - 8080
     volumes:
       - ./flask:/app
     working_dir: /app
