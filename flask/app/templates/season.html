@@ -1,1 +1,65 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
+
+{% block page %}
+<table class="table table-sm table-striped table-bordered" style="border-collapse: collapse; width: 100%;">
+    <thead class="thead-dark" style="border-top: 2px solid; border-color: white;">
+        <tr>
+            <th scope="col" rowspan="2" style="position: sticky; width: 60px; left: 0px; background-color: #222529;"></th>
+            <th scope="col" rowspan="2" style="width: 8%; text-align: center; vertical-align: middle; padding-left: 10px;">City</th>
+            <th scope="col" rowspan="2" style="width: 8%; text-align: center;vertical-align: middle;">Mascot</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle;">Wins</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle; ">Losses</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle;">Rank</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle;">Div Rank</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle;">PF</th>
+            <th scope="col" rowspan="2" style="text-align: center; vertical-align: middle;">PA</th>
+            <th scope="col" colspan="6" style="text-align: center; vertical-align: middle;">Offense</th>
+            <th scope="col" colspan="6" style="text-align: center; vertical-align: middle;">Defense</th>
+        </tr>
+        <tr>
+            {% for i in [1,2] %}
+            <th scope="col" style="text-align: center; white-space: nowrap;">Pass YDS</th>
+            <th scope="col" style="text-align: center; white-space: nowrap;">Rush YDS</th>
+            <th scope="col" style="text-align: center; white-space: nowrap;">Pass TD</th>
+            <th scope="col" style="text-align: center; white-space: nowrap;">Rush TD</th>
+            <th scope="col" style="text-align: center; white-space: nowrap;">INT</th>
+            <th scope="col" style="text-align: center; white-space: nowrap;">FB</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in teams %}
+        <tr>
+            <td class="season-table-row" align="center" style="position: sticky; width: 60px; left: 0px; padding: 0 0 0 20px; justify-content: center; background-color: {{'#ffffff' if loop.index % 2 == 0 else '#f4f4f4'}};">
+                <img style="height: 30px; width: 30px; margin-right: 20px;"
+                    src="https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/{{team.team_id.lower()}}.png">
+                </img>
+            </td>
+            <td class="season-table-row" style="width: 8%; padding-left: 10px;">{{team.city}}</td>
+            <td class="season-table-row" align="center" style="width: 8%;">{{team.mascot}}</td>
+            <td class="season-table-row" align="center">8</td>
+            <td class="season-table-row" align="center">8</td>
+            <td class="season-table-row" align="center">{{loop.index}}</td>
+            <td class="season-table-row" align="center">{{loop.index % 4 + 1}}</td>
+            <td class="season-table-row" align="center">22.3</td>
+            <td class="season-table-row" align="center">18.1</td>
+
+            <td class="season-table-row" align="center">322</td>
+            <td class="season-table-row" align="center">104</td>
+            <td class="season-table-row" align="center">2.1</td>
+            <td class="season-table-row" align="center">1.4</td>
+            <td class="season-table-row" align="center">0.8</td>
+            <td class="season-table-row" align="center">1.1</td>
+
+            <td class="season-table-row" align="center">322</td>
+            <td class="season-table-row" align="center">104</td>
+            <td class="season-table-row" align="center">2.1</td>
+            <td class="season-table-row" align="center">1.4</td>
+            <td class="season-table-row" align="center">0.8</td>
+            <td class="season-table-row" align="center">1.1</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock page %}

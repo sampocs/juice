@@ -102,6 +102,7 @@ services:
       - '5000:5000'
     volumes:
       - ./flask:/app
+      - ./api:/app/api
     working_dir: /app
     command: ["python", "run.py"]
     depends_on: 
