@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+    db:
+        container_name: juice-postgres
+        image: postgres:13.4-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: ${JUICE_DB_USER}
+            POSTGRES_PASSWORD: ${JUICE_DB_PASSWORD}
+            POSTGRES_DB: ${JUICE_DB_NAME}
+        ports:
+          - '5432:5432'
+
+    api:
+        container_name: juice-fastapi
+        build:
+            context: ./api
+        image: juice-fastapi
+        environment: 
+            JUICE_DB_USER: ${JUICE_DB_USER}
+            JUICE_DB_PASSWORD: ${JUICE_DB_PASSWORD}
+            JUICE_DB_NAME: ${JUICE_DB_NAME}
+        volumes: 
+            - ./api/app:/app
+        ports:
+            - '8000:8000'

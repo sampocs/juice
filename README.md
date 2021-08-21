@@ -1,6 +1,5 @@
 # Juice
-NFL Dashboard <br>
-**MVP in progress**
+NFL Dashboard (**MVP in progress**)
 
 ## Pages (Tables)
 ### Season

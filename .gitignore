@@ -1,0 +1,8 @@
+.vscode
+__pycache__
+*.sketch
+.DS_Store
+examples
+exploration
+.env
+.venv
