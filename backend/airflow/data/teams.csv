@@ -1,0 +1,37 @@
+team_id,org_id,city,mascot,start_year,active,pfr_name
+ARI,ARI,Arizona,Cardinals,1994,TRUE,crd
+ATL,ATL,Atlanta,Falcons,1966,TRUE,atl
+BAL,BAL,Baltimore,Ravens,1996,TRUE,rav
+BUF,BUF,Buffalo,Bills,1960,TRUE,buf
+CAR,CAR,Carolina,Panthers,1995,TRUE,car
+CHI,CHI,Chicago,Bears,1922,TRUE,chi
+CIN,CIN,Cincinnati,Bengals,1968,TRUE,cin
+CLE,CLE,Cleveland,Browns,1946,TRUE,cle
+DAL,DAL,Dallas,Cowboys,1960,TRUE,dal
+DEN,DEN,Denver,Broncos,1960,TRUE,den
+DET,DET,Detroit,Lions,1934,TRUE,det
+GB,GB,Green Bay,Packers,1919,TRUE,gnb
+HOU,HOU,Houston,Texans,2002,TRUE,htx
+IND,IND,Indianapolis,Colts,1984,TRUE,clt
+JAX,JAX,Jacksonville,Jaguars,1995,TRUE,jax
+KC,KC,Kansas City,Chiefs,1963,TRUE,kan
+LV,LV,Las Vegas,Raiders,2020,TRUE,rai
+LAC,LAC,Los Angeles,Chargers,2017,TRUE,sdg
+LAR,LAR,Los Angeles,Rams,2016,TRUE,ram
+MIA,MIA,Miami,Dolphins,1966,TRUE,mia
+MIN,MIN,Minnesota,Vikings,1961,TRUE,min
+NE,NE,New England,Patriots,1971,TRUE,nwe
+NO,NO,New Orleans,Saints,1967,TRUE,nor
+NYG,NYG,New York,Giants,1925,TRUE,nyg
+NYJ,NYJ,New York,Jets,1963,TRUE,nyj
+PHI,PHI,Philadelphia,Eagles,1944,TRUE,phi
+PIT,PIT,Pittsburgh,Steelers,1945,TRUE,pit
+SF,SF,San Francisco,49ers,1946,TRUE,sfo
+SEA,SEA,Seattle,Seahawks,1976,TRUE,sea
+TB,TB,Tampa Bay,Buccaneers,1976,TRUE,tam
+TEN,TEN,Tennessee,Titans,1999,TRUE,oti
+WSH,WSH,Washington,Football Team,2020,TRUE,was
+OAK,LV,Oakland,Raiders,1995,FALSE,rai
+STL,LAR,St Louis,Rams,1995,FALSE,ram
+SD,LAC,San Diego,Chargers,1961,FALSE,sdg
+WSHR,WSH,Washington,Redskins,1937,FALSE,was
