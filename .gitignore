@@ -6,3 +6,5 @@ examples
 exploration
 .env
 .venv
+backend/airflow/database
+.ipynb_checkpoints/

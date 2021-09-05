@@ -1,5 +1,8 @@
 version: '3'
 
+volumes: 
+    airflow-logs:
+
 services:
     db:
         container_name: juice-postgres
@@ -25,3 +28,51 @@ services:
             - ./api/app:/app
         ports:
             - '8000:8000'
+
+    airflow-scheduler:
+        container_name: juice-airflow-scheduler
+        build:
+            context: ./airflow
+        image: juice-airflow
+        restart: always
+        ports:
+            - '8793:8793'
+        environment: 
+            AIRFLOW_USERNAME:
+            AIRFLOW_EMAIL:
+            AIRFLOW_FIRSTNAME:
+            AIRFLOW_LASTNAME:
+            AIRFLOW_PASSWORD:
+            JUICE_DB_NAME: 
+            JUICE_DB_USER:
+            JUICE_DB_PASSWORD:
+            JUICE_API_ENDPOINT: http://api:8000
+            AIRFLOW__CORE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/database/airflow.db
+        volumes:
+            - ./airflow/dags:/opt/airflow/dags
+            - ./airflow/database:/opt/airflow/database
+            - ./airflow/data:/opt/airflow/data
+            - airflow-logs:/opt/airflow/logs
+        command: ["start-scheduler.sh"]
+        
+ 
+    airflow-webserver:
+        container_name: juice-airflow-webserver
+        build:
+            context: ./airflow
+        image: juice-airflow
+        restart: always
+        ports:
+            - '8081:8081'
+        environment: 
+            AIRFLOW__CORE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/database/airflow.db
+        volumes:
+            - ./airflow/dags:/opt/airflow/dags
+            - ./airflow/database:/opt/airflow/database
+            - airflow-logs:/opt/airflow/logs
+        command: ["start-webserver.sh"]
+        depends_on: 
+            - airflow-scheduler
+
+
+            
