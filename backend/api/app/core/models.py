@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Text, Boolean, DateTime
+from sqlalchemy.sql.expression import null
 from core.database import Base
 
 
@@ -28,8 +29,8 @@ class Game(Base):
     datetime     = Column('datetime',     DateTime)
     home_team_id = Column('home_team_id', Text)
     away_team_id = Column('away_team_id', Text)
-    home_score   = Column('home_score',   Integer)
-    away_score   = Column('away_score',   Integer)
+    home_score   = Column('home_score',   Integer, nullable=True)
+    away_score   = Column('away_score',   Integer, nullable=True)
     has_pbp      = Column('has_pbp',      Boolean, default=False)
 
     def __repr__(self) -> str:

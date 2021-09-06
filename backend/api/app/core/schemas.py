@@ -1,4 +1,7 @@
 from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional
+
 
 class Team(BaseModel):
     team_id: str
@@ -8,6 +11,21 @@ class Team(BaseModel):
     start_year: int
     active: bool
     pfr_name: str
+
+    class Config:
+        orm_mode = True
+
+
+class Game(BaseModel):
+    game_id: str
+    season: int
+    week: int
+    datetime: str
+    home_team_id: str
+    away_team_id: str
+    home_score: Optional[int]
+    away_score: Optional[int]
+    has_pbp: Optional[bool] = False
 
     class Config:
         orm_mode = True

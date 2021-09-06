@@ -26,6 +26,11 @@ def add_teams(teams: List[schemas.Team], db: Session = Depends(get_db)):
     teams = crud.add_teams(db=db, teams=teams)
     return teams
 
+@app.post('/games', response_model=List[schemas.Game])
+def add_teams(games: List[schemas.Game], db: Session = Depends(get_db)):
+    games = crud.add_games(db=db, games=games)
+    return games
+
 @app.get('/games/past/{year}/')
 def get_past_games(year: str):
     pass

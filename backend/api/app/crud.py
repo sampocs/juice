@@ -4,7 +4,7 @@ from core import models, schemas
 from typing import List
 
 def add_games(db: Session, games):
-    game_objects = [models.Game(**game) for game in games]
+    game_objects = [models.Game(**game.dict()) for game in games]
     db.bulk_save_objects(game_objects)
     db.commit()
     return games
