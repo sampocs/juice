@@ -1,7 +1,7 @@
 import re
 import constants as c
 import pbp_parser 
-from typing import List
+from typing import List, Callable
 
 PLAYER_EXAMPLES = [
     'First Last', 
@@ -20,12 +20,14 @@ DISTANCE_EXAMPLES = [
     '20 yards'
 ]
 
+# Ex: (tackle by Khalil Mack)
 TACKLER_EXAMPLES = [
     '', # no tackler
     *[f'(tackle by {player})' for player in PLAYER_EXAMPLES],
     *[f'(tackle by {player} and {player})' for player in PLAYER_EXAMPLES]
 ]
 
+# Ex: (defended by Eddie Jackson)
 DEFENDER_EXAMPLES = [
     '', # no defender
     *[f'(defended by {player}' for player in PLAYER_EXAMPLES]
@@ -36,108 +38,92 @@ TOUCHDOWN_EXAMPLES = [
     ', touchdown'
 ]
 
-def get_example_run_plays() -> List[str]:
+# Ex: David Montgomery right tackle for 10 yards, touchdown 
+RUN_EXAMPLES = [
+    f'{player} {direction} for {distance}{tackler}'
+    for player in PLAYER_EXAMPLES
+    for direction in c.RUN_DIRECTIONS
+    for distance in DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
+]
+
+# Ex: Justin Fields pass complete deep right to Allen Robinson for 45 yards, touchdown
+PASS_COMPLETE_EXAMPLES = [
+     f'{player} pass complete {direction} to {player} for {distance}{tackler}{touchdown}'
+    for player in PLAYER_EXAMPLES
+    for direction in c.PASS_DIRECTIONS
+    for distance in DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
+    for touchdown in TOUCHDOWN_EXAMPLES
+]
+
+# Ex: Aaron Rodgers pass incomplete short right intended for Davante Adams, defended by Jaylon Johnson
+PASS_INCOMPLETE_EXAMPLES = [
+    f'{player} pass incomplete {direction} intended for {player}{defender}'
+    for player in PLAYER_EXAMPLES
+    for direction in c.PASS_DIRECTIONS
+    for defender in DEFENDER_EXAMPLES    
+]
+
+# Ex: Robbie Gould kicks off 65 yards, touchback
+KICKOFF_TOUCHBACK_EXAMPLES = [
+    f'{player} kicks off {distance}, touchback'
+    for player in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+]
+
+# Ex: Robbie Gould kicks off 65 yards, returned by returned by Cordarrelle Patterson for 54 yards
+KICKOFF_RETURNED_EXAMPLES = [
+    f'{kicker} kicks off {kick_distance}, returned by {returner} for {return_distance}{tackler}'
+    for kicker in PLAYER_EXAMPLES
+    for kick_distance in DISTANCE_EXAMPLES
+    for returner in PLAYER_EXAMPLES
+    for return_distance in DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
+]
+
+ALL_PLAY_EXAMPLES = {
+    'RUN': RUN_EXAMPLES,
+    'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
+    'PASS_INCOMPLETE': PASS_INCOMPLETE_EXAMPLES,
+    'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
+    'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES
+}
+ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
+
+
+def check_across_all_examples(tested_play_type: str, parser_function: Callable):
     """
-    Gets a list of example RUN plays by iterating through different 
-    example permutations
+    Helper function to test the regex parser methods
+    Loops through all examples and tests that the example either matches
+      or doesn't match the proper pattern for that play type
 
-    Ex: David Montgomery right tackle for 10 yards, touchdown 
+    Ex: tested_play_type of RUN and parser function pbp_parser.parse_run_play
+      will make sure all RUN examples are successfully parsed, and all other 
+      play types are not
+
+    :param tested_play_type: Play type of the current test (e.g. RUN)
+    :param parser_function: Function to call that parses that specific play type 
+        (e.g. pbp_parser.parse_run_play)
+        The function should return a Match object if the parse was successful,
+        or None otherwise
     """
-    return [
-        f'{player} {direction} for {distance}{tackler}'
-        for player in PLAYER_EXAMPLES
-        for direction in c.RUN_DIRECTIONS
-        for distance in DISTANCE_EXAMPLES
-        for tackler in TACKLER_EXAMPLES
-    ]
+    assert tested_play_type in ALL_PLAY_TYPES, \
+        f'Invalid play type ({tested_play_type}). Must be one of: {ALL_PLAY_TYPES}'
 
+    for (example_play_type, examples) in ALL_PLAY_EXAMPLES.items():
+        for example_string in examples:
+            # If the example play type and the tested play type are the same,
+            # the parser function should return a Match object
+            if example_play_type == tested_play_type:
+                assert parser_function(example_string), \
+                    f'No match with {tested_play_type} regex: "{example_string}"'
 
-def get_example_completed_pass_plays() -> List[str]:
-    """
-    Gets a list of example COMPLETED PASS plays by iterating through different 
-    example permutations
-
-    Ex: Justin Fields pass complete deep right to Allen Robinson for 45 yards, touchdown
-    """
-    return [
-        f'{player} pass complete {direction} to {player} for {distance}{tackler}{touchdown}'
-        for player in PLAYER_EXAMPLES
-        for direction in c.PASS_DIRECTIONS
-        for distance in DISTANCE_EXAMPLES
-        for tackler in TACKLER_EXAMPLES
-        for touchdown in TOUCHDOWN_EXAMPLES
-    ]
-
-
-def get_example_incomplete_pass_plays() -> List[str]:
-    """
-    Gets a list of example INCOMPLETE PASS plays by iterating through different 
-    example permutations
-
-    Ex: Aaron Rodgers pass incomplete short right intended for Davante Adams, defended by Jaylon Johnson
-    """
-    return [
-        f'{player} pass incomplete {direction} intended for {player}{defender}'
-        for player in PLAYER_EXAMPLES
-        for direction in c.PASS_DIRECTIONS
-        for defender in DEFENDER_EXAMPLES
-    ]
-
-
-def get_example_kickoff_touchback_plays() -> List[str]:
-    """
-    Gets a list of example KICKOFF TOUCHBACK plays 
-
-    Ex: Robbie Gould kicks off 65 yards, touchback
-    """
-    return [
-        f'{player} kicks off {distance}, touchback'
-        for player in PLAYER_EXAMPLES
-        for distance in DISTANCE_EXAMPLES
-    ]
-
-
-def get_example_kickoff_returned_plays() -> List[str]:
-    """
-    Gets a list of example KICKOFF RETURNED plays 
-
-    Ex: Robbie Gould kicks off 65 yards, returned by returned by Cordarrelle Patterson for 54 yards
-    """
-    return [
-        f'{kicker} kicks off {kick_distance}, returned by {returner} for {return_distance}{tackler}'
-        for kicker in PLAYER_EXAMPLES
-        for kick_distance in DISTANCE_EXAMPLES
-        for returner in PLAYER_EXAMPLES
-        for return_distance in DISTANCE_EXAMPLES
-        for tackler in TACKLER_EXAMPLES
-    ]
-
-
-def get_example_plays_except(excluded_play_type: str) -> List[str]:
-    """
-    Get's a list of all the play types, except the one specified as a parameter
-    This is for checking that the regex does not match
-    """
-    assert excluded_play_type in ['run', 'completed_pass', 'incomplete_pass', 'kickoff_touchback', 'kickoff_returned'], \
-        f'Invalid play type: {excluded_play_type}'
-
-    all_play_types = []
-    if excluded_play_type != 'run':
-        all_play_types += get_example_run_plays()
-
-    if excluded_play_type != 'completed_pass':
-        all_play_types += get_example_completed_pass_plays()
-
-    if excluded_play_type != 'incomplete_pass':
-        all_play_types += get_example_incomplete_pass_plays()
-
-    if excluded_play_type != 'kickoff_touchback':
-        all_play_types += get_example_kickoff_touchback_plays()
-
-    if excluded_play_type != 'kickoff_returned':
-        all_play_types += get_example_kickoff_returned_plays()
-
-    return all_play_types
+            # If the example play type and the tested play type are different, 
+            # the parser should return None
+            else:
+                assert parser_function(example_string) is None, \
+                    f'Test string not a {tested_play_type} regex: "{example_string}"'
 
 
 def test_wrap_expressions():
@@ -167,62 +153,31 @@ def test_run_parsing():
     """
     Test that the RUN play parser matches only run plays
     """
-    for test_string in get_example_run_plays():
-        assert pbp_parser.parse_run_play(test_string), \
-            f'No match with run play regex: {test_string}'
-
-    for test_string in get_example_plays_except('run'):
-        assert pbp_parser.parse_run_play(test_string) is None, \
-            f'Test string not a run play but matched regex: "{test_string}"'
+    check_across_all_examples('RUN', pbp_parser.parse_run_play)
 
 
-def test_completed_pass_parsing():
+def test_pass_complete_parsing():
     """
-    Test that the COMPLETED PASS play parser matches only completed pass plays
+    Test that the PASS_COMPLETE play parser matches only completed pass plays
     """
-    for test_string in get_example_completed_pass_plays():
-        assert pbp_parser.parse_completed_pass_play(test_string), \
-            f'No match with completed pass regex: "{test_string}"'
-    
-    for test_string in get_example_plays_except('completed_pass'):
-        assert pbp_parser.parse_completed_pass_play(test_string) is None, \
-            f'Test string not a completed pass play but matched regex: "{test_string}"'
+    check_across_all_examples('PASS_COMPLETE', pbp_parser.parse_pass_complete_play)
 
 
 def test_incomplete_pass_parsing():
     """
-    Test that the INCOMPLETE PASS play parser matches only incomplete pass plays
+    Test that the PASS_INCOMPLETE play parser matches only incomplete pass plays
     """
-    for test_string in get_example_incomplete_pass_plays():
-        assert pbp_parser.parse_incomplete_pass_play(test_string), \
-            f'No match with incomplete pass regex: "{test_string}"'
-    
-    for test_string in get_example_plays_except('incomplete_pass'):
-        assert pbp_parser.parse_incomplete_pass_play(test_string) is None, \
-            f'Test string not an incompleted pass play but matched regex: "{test_string}"'
+    check_across_all_examples('PASS_INCOMPLETE', pbp_parser.parse_pass_incomplete_play)
 
 
 def test_kickoff_touchback_parsing():
     """
-    Test that the KICKOFF TOUCHBACK play parser matches kickoff touchbacks
+    Test that the KICKOFF_TOUCHBACK play parser matches kickoff touchbacks
     """
-    for test_string in get_example_kickoff_touchback_plays():
-        assert pbp_parser.parse_kickoff_touchback(test_string), \
-            f'No match with kickoff touchback regex: "{test_string}"'
-    
-    for test_string in get_example_plays_except('kickoff_touchback'):
-        assert pbp_parser.parse_kickoff_touchback(test_string) is None, \
-            f'Test string not a kickoff touchback but matched regex: "{test_string}"'
-
+    check_across_all_examples('KICKOFF_TOUCHBACK', pbp_parser.parse_kickoff_touchback)
 
 def test_kickoff_returned_parsing():
     """
-    Test that the KICKOFF RETURNED play parser matches only kickoffs returned
+    Test that the KICKOFF_RETURNED play parser matches only kickoffs returned
     """
-    for test_string in get_example_kickoff_returned_plays():
-        assert pbp_parser.parse_kickoff_returned(test_string), \
-            f'No match with kickoff touchback regex: "{test_string}"'
-    
-    for test_string in get_example_plays_except('kickoff_returned'):
-        assert pbp_parser.parse_kickoff_returned(test_string) is None, \
-            f'Test string not a kickoff touchback but matched regex: "{test_string}"'
+    check_across_all_examples('KICKOFF_RETURNED', pbp_parser.parse_kickoff_returned)

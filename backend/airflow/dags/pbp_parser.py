@@ -56,13 +56,13 @@ def parse_run_play(play_description: str) -> dict or None:
     return re.match(pattern, play_description)
 
 
-def parse_completed_pass_play(play_description: str) -> dict or None:
+def parse_pass_complete_play(play_description: str) -> dict or None:
     """
-    Given a play by play description, if it's a COMPLETED PASS play,
+    Given a play by play description, if it's a PASS_COMPLETE play,
     returns the regex match dictionary for each piece of information in the description
     Otherwise, returns None
 
-    COMPLETED PASS plays should be of the form:
+    PASS_COMPLETE plays should be of the form:
         {Player Name} pass complete {direction} to {reciever} for {distance} [(tackle by {tackler})]
 
     Example: 
@@ -87,17 +87,17 @@ def parse_completed_pass_play(play_description: str) -> dict or None:
     return re.match(pattern, play_description)
 
 
-def parse_incomplete_pass_play(play_description: str) -> dict or None:
+def parse_pass_incomplete_play(play_description: str) -> dict or None:
     """
-    Given a play by play description, if it's a INCOMPLETE PASS play,
+    Given a play by play description, if it's a PASS_INCOMPLETE play,
     returns the regex match dictionary for each piece of information in the description
     Otherwise, returns None
 
-    COMPLETED PASS plays should be of the form:
-        {Player Name} pass complete {direction} to {reciever} for {distance} [(tackle by {tackler})]
+    PASS_INCOMPLETE  plays should be of the form:
+        {Player Name} pass incomplete {direction} intended for {reciever} [(defended by {tackler})]
 
     Example: 
-        play_description = "Justin Fields pass complete deep right to Allen Robinson for 45 yards (tackle by Jalen Ramsey)"
+        play_description = "Aaron Rodgers pass incomplete short right intended for Davante Adams, defended by Jaylon Johnson"
         returns: {
             "runner": "Justin Fields", 
             "direction": "deep right", 
