@@ -17,14 +17,9 @@ PASS_DIRECTIONS = [
     r"deep right",
 ]
 
-COMPLETION_STATUSES = [
-    r"complete",
-    r"incomplete"
-]
-
 DISTANCES = [
     r"[-]?\d+ yard[s]?",
     r"no gain"
 ]
 
-PLAYER = r"\D+"
+PLAYER = r"[a-zA-Z, .'-]+[a-zA-Z]" # can't end with a space

@@ -1,5 +1,5 @@
 import re
-import constants as c
+import play_components as pc
 
 def wrap_expressions(expressions: dict) -> dict:
     """
@@ -46,10 +46,10 @@ def parse_run_play(play_description: str) -> dict or None:
     """
 
     expressions = {
-        'runner': c.PLAYER,
-        'direction': r"|".join(c.RUN_DIRECTIONS),
-        'distance': r"|".join(c.DISTANCES),
-        'tackler': c.PLAYER
+        'runner': pc.PLAYER,
+        'direction': r"|".join(pc.RUN_DIRECTIONS),
+        'distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
     }
 
     pattern = r"%(runner)s %(direction)s for %(distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
@@ -75,11 +75,11 @@ def parse_pass_complete_play(play_description: str) -> dict or None:
         }
     """
     expressions = {
-        'passer': c.PLAYER,
-        'direction': r"|".join(c.PASS_DIRECTIONS),
-        'reciever': c.PLAYER,
-        'distance': r"|".join(c.DISTANCES),
-        'tackler': c.PLAYER
+        'passer': pc.PLAYER,
+        'direction': r"|".join(pc.PASS_DIRECTIONS),
+        'reciever': pc.PLAYER,
+        'distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
     }
 
     pattern = r"%(passer)s pass complete %(direction)s to %(reciever)s for %(distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
@@ -97,7 +97,7 @@ def parse_pass_incomplete_play(play_description: str) -> dict or None:
         {Player Name} pass incomplete {direction} intended for {reciever} [(defended by {tackler})]
 
     Example: 
-        play_description = "Aaron Rodgers pass incomplete short right intended for Davante Adams, defended by Jaylon Johnson"
+        play_description = "Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)"
         returns: {
             "runner": "Justin Fields", 
             "direction": "deep right", 
@@ -106,10 +106,10 @@ def parse_pass_incomplete_play(play_description: str) -> dict or None:
         }
     """
     expressions = {
-        'passer': c.PLAYER,
-        'direction': r"|".join(c.PASS_DIRECTIONS),
-        'reciever': c.PLAYER,
-        'defender': c.PLAYER
+        'passer': pc.PLAYER,
+        'direction': r"|".join(pc.PASS_DIRECTIONS),
+        'reciever': pc.PLAYER,
+        'defender': pc.PLAYER
     }
 
     pattern = r"%(passer)s pass incomplete %(direction)s intended for %(reciever)s( \(defended by %(defender)s\))?" % wrap_expressions(expressions)
@@ -134,8 +134,8 @@ def parse_kickoff_touchback(play_description: str) -> dict or None:
         }
     """
     expressions = {
-        'kicker': c.PLAYER,
-        'distance': r"|".join(c.DISTANCES)
+        'kicker': pc.PLAYER,
+        'distance': r"|".join(pc.DISTANCES)
     }
 
     pattern = r"%(kicker)s kicks off %(distance)s, touchback" % wrap_expressions(expressions)
@@ -163,11 +163,11 @@ def parse_kickoff_returned(play_description: str) -> dict or None:
         }
     """
     expressions = {
-        'kicker': c.PLAYER,
-        'kick_distance': r"|".join(c.DISTANCES),
-        'returner': c.PLAYER,
-        'return_distance': r"|".join(c.DISTANCES),
-        'tackler': c.PLAYER
+        'kicker': pc.PLAYER,
+        'kick_distance': r"|".join(pc.DISTANCES),
+        'returner': pc.PLAYER,
+        'return_distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
     }
 
     pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)

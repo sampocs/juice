@@ -1,13 +1,11 @@
-import re
-import constants as c
-import pbp_parser 
-from typing import List, Callable
+from typing import Callable
+import play_components as pc
 
 PLAYER_EXAMPLES = [
     'First Last', 
     'First Middle Last', 
     'First Last-Last', 
-    'First L"Last', 
+    'First St. Last', 
     "First L'Last"
 ]
 
@@ -42,7 +40,7 @@ TOUCHDOWN_EXAMPLES = [
 RUN_EXAMPLES = [
     f'{player} {direction} for {distance}{tackler}'
     for player in PLAYER_EXAMPLES
-    for direction in c.RUN_DIRECTIONS
+    for direction in pc.RUN_DIRECTIONS
     for distance in DISTANCE_EXAMPLES
     for tackler in TACKLER_EXAMPLES
 ]
@@ -51,17 +49,17 @@ RUN_EXAMPLES = [
 PASS_COMPLETE_EXAMPLES = [
      f'{player} pass complete {direction} to {player} for {distance}{tackler}{touchdown}'
     for player in PLAYER_EXAMPLES
-    for direction in c.PASS_DIRECTIONS
+    for direction in pc.PASS_DIRECTIONS
     for distance in DISTANCE_EXAMPLES
     for tackler in TACKLER_EXAMPLES
     for touchdown in TOUCHDOWN_EXAMPLES
 ]
 
-# Ex: Aaron Rodgers pass incomplete short right intended for Davante Adams, defended by Jaylon Johnson
+# Ex: Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)
 PASS_INCOMPLETE_EXAMPLES = [
     f'{player} pass incomplete {direction} intended for {player}{defender}'
     for player in PLAYER_EXAMPLES
-    for direction in c.PASS_DIRECTIONS
+    for direction in pc.PASS_DIRECTIONS
     for defender in DEFENDER_EXAMPLES    
 ]
 
@@ -124,60 +122,3 @@ def check_across_all_examples(tested_play_type: str, parser_function: Callable):
             else:
                 assert parser_function(example_string) is None, \
                     f'Test string not a {tested_play_type} regex: "{example_string}"'
-
-
-def test_wrap_expressions():
-    """
-    Tests the wrapper to help match variables to regex patterns
-    """
-    expressions = {
-        'year': r"[\d]{4}",
-        'month': r"[\d]{2}"
-    }
-    wrapped_expressions = {
-        'year': r"(?P<year>[\d]{4})",
-        'month': r"(?P<month>[\d]{2})"
-    }
-    assert pbp_parser.wrap_expressions(expressions) == wrapped_expressions
-
-    test_string = '2019 01'
-    test_regex = r"%(year)s %(month)s" % pbp_parser.wrap_expressions(expressions)
-    expected_matching = {
-        'year': '2019',
-        'month': '01'
-    }
-    assert re.match(test_regex, test_string).groupdict() == expected_matching
-
-
-def test_run_parsing():
-    """
-    Test that the RUN play parser matches only run plays
-    """
-    check_across_all_examples('RUN', pbp_parser.parse_run_play)
-
-
-def test_pass_complete_parsing():
-    """
-    Test that the PASS_COMPLETE play parser matches only completed pass plays
-    """
-    check_across_all_examples('PASS_COMPLETE', pbp_parser.parse_pass_complete_play)
-
-
-def test_incomplete_pass_parsing():
-    """
-    Test that the PASS_INCOMPLETE play parser matches only incomplete pass plays
-    """
-    check_across_all_examples('PASS_INCOMPLETE', pbp_parser.parse_pass_incomplete_play)
-
-
-def test_kickoff_touchback_parsing():
-    """
-    Test that the KICKOFF_TOUCHBACK play parser matches kickoff touchbacks
-    """
-    check_across_all_examples('KICKOFF_TOUCHBACK', pbp_parser.parse_kickoff_touchback)
-
-def test_kickoff_returned_parsing():
-    """
-    Test that the KICKOFF_RETURNED play parser matches only kickoffs returned
-    """
-    check_across_all_examples('KICKOFF_RETURNED', pbp_parser.parse_kickoff_returned)
