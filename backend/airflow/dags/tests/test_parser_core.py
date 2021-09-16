@@ -47,3 +47,11 @@ class TestParseCore:
             assert re.match(pc.PLAYER, player), \
                 f'Example player ({player}) did not match Player regex'
 
+
+    def test_yardage_regex(self):
+        """
+        Test that the yardage regex is working properly
+        """
+        for yardage in YARDAGE_EXAMPLES:
+            assert re.match(pc.YARDAGE, yardage), \
+                f'Example yardage ({yardage}) did not match Yardage regex'

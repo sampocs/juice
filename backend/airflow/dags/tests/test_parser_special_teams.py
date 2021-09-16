@@ -136,7 +136,104 @@ class TestExtraPoint:
 
 
 class TestPunt:
-    pass
+
+    def test_punt_out_of_bounds_all_examples(self):
+        """
+        Test that the PUNT_OUT_OF_BOUNDS play parser matches out of bounds punts
+        """
+        play_examples.check_across_all_examples('PUNT_OUT_OF_BOUNDS', pbp_parser.parse_punt_out)
 
 
+    def test_punt_downed_all_examples(self):
+        """
+        Test that the PUNT_DOWNED play parser matches downed punts
+        """
+        play_examples.check_across_all_examples('PUNT_DOWNED', pbp_parser.parse_punt_downed)
 
+
+    def test_punt_fair_catch_all_examples(self):
+        """
+        Test that the PUNT_FAIR_CATCH play parser matches fair catches
+        """
+        play_examples.check_across_all_examples('PUNT_FAIR_CATCH', pbp_parser.parse_punt_fair_catch)
+
+
+    def test_punt_returned_all_examples(self):
+        """
+        Test that the PUNT_RETURNED play parser matches returned punts
+        """
+        play_examples.check_across_all_examples('PUNT_RETURNED', pbp_parser.parse_punt_returned)
+
+
+    def test_punt_out_of_bounds(self):
+        """
+        Test match dict from punt out of bounds
+        """
+        description = "Pat O'Donnell punts 45 yards out of bounds"
+        expected = {
+            'punter': "Pat O'Donnell",
+            'distance': '45 yards'
+        }
+        match = pbp_parser.parse_punt_out(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_punt_downed(self):
+        """
+        Test match dict from punt downed
+        """
+        description = "Pat O'Donnell punts 45 yards downed by Cordarrelle Patterson"
+        expected = {
+            'punter': "Pat O'Donnell",
+            'distance': '45 yards',
+            'downer': 'Cordarrelle Patterson'
+        }
+        match = pbp_parser.parse_punt_downed(description)
+        assert match and (match.groupdict() == expected)
+
+    
+    def test_punt_fair_catch(self):
+        """
+        Test match dict from punt fair caught
+        """
+        description = "Pat O'Donnell punts 45 yards, fair catch by Cordarrelle Patterson at DET-10"
+        expected = {
+            'punter': "Pat O'Donnell",
+            'punt_distance': '45 yards',
+            'returner': 'Cordarrelle Patterson',
+            'yardage': 'DET-10'
+        }
+        match = pbp_parser.parse_punt_fair_catch(description)
+        assert match and (match.groupdict() == expected)
+
+    
+    def test_punt_returned(self):
+        """
+        Test match dict from punt returned
+        """
+        description = "Pat O'Donnell punts 45 yards, returned by Cordarrelle Patterson for 27 yards"
+        expected = {
+            'punter': "Pat O'Donnell", 
+            'punt_distance': '45 yards',
+            'returner': 'Cordarrelle Patterson',
+            'return_distance': '27 yards',
+            'tackler': None
+        }
+        match = pbp_parser.parse_punt_returned(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_punt_returned_with_tackle(self):
+        """
+        Test match dict from punt returned with tackle
+        """
+        description = "Pat O'Donnell punts 45 yards, returned by Cordarrelle Patterson for 27 yards (tackle by Pat O'Donnell)"
+        expected = {
+            'punter': "Pat O'Donnell", 
+            'punt_distance': '45 yards',
+            'returner': 'Cordarrelle Patterson',
+            'return_distance': '27 yards',
+            'tackler': "Pat O'Donnell"
+        }
+        match = pbp_parser.parse_punt_returned(description)
+        assert match and (match.groupdict() == expected)

@@ -18,6 +18,15 @@ DISTANCE_EXAMPLES = [
     '20 yards'
 ]
 
+YARDAGE_EXAMPLES = [
+    'CHI-1',
+    'CHI-10',
+    'CHI-45',
+    'SF-5',
+    'SF-14',
+    'SF-49'
+]
+
 # Ex: (tackle by Khalil Mack)
 TACKLER_EXAMPLES = [
     '', # no tackler
@@ -95,6 +104,40 @@ EXTRA_POINT_EXAMPLES = [
     for status in pc.FIELD_GOAL_STATUSES
 ]
 
+# Ex: Pat O'Donnell punts 45 yards out of bounds
+PUNT_OUT_OF_BOUNDS_EXAMPLES = [
+    f'{punter} punts {distance} out of bounds'
+    for punter in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts 45 yards downed by Cordarrelle Patterson
+PUNT_DOWNED_EXAMPLES = [
+    f'{punter} punts {distance} downed by {downer}'
+    for punter in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+    for downer in PLAYER_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts 45 yards, fair catch by Cordarrelle Patterson at DET-10
+PUNT_FAIR_CATCH_EXAMPLES = [
+    f'{punter} punts {distance}, fair catch by {catcher} at {yardage}'
+    for punter in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+    for catcher in PLAYER_EXAMPLES
+    for yardage in YARDAGE_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts 45 yards, returned by Cordarrelle Patterson for 27 yards (tackle by Pat O'Donnell)
+PUNT_RETURNED = [
+    f'{punter} punts {punt_distance}, returned by {returner} for {return_distance}{tackler}'
+    for punter in PLAYER_EXAMPLES
+    for punt_distance in DISTANCE_EXAMPLES
+    for returner in PLAYER_EXAMPLES
+    for return_distance in DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
+]
+
 ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
@@ -102,7 +145,11 @@ ALL_PLAY_EXAMPLES = {
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
     'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
     'FIELD_GOAL': FIELD_GOAL_EXAMPLES,
-    'EXTRA_POINT': EXTRA_POINT_EXAMPLES
+    'EXTRA_POINT': EXTRA_POINT_EXAMPLES,
+    'PUNT_OUT_OF_BOUNDS': PUNT_OUT_OF_BOUNDS_EXAMPLES,
+    'PUNT_DOWNED': PUNT_DOWNED_EXAMPLES,
+    'PUNT_FAIR_CATCH': PUNT_FAIR_CATCH_EXAMPLES,
+    'PUNT_RETURNED': PUNT_RETURNED
 }
 ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
 

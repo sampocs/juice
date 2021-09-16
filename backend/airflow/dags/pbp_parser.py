@@ -231,13 +231,116 @@ def parse_extra_point(play_description: str) -> dict or None:
 
 
 def parse_punt_out(play_description: str) -> dict or None:
-    pass
+    """
+    Given a play by play description, if it's a PUNT_OUT_OF_BOUNDS,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
 
-def parse_punt_returned(play_description: str) -> dict or None:
-    pass
+    PUNT_OUT_OF_BOUNDS should be of the form:
+        {Player Name} punts {distance} out of bounds
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards out of bounds"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "distance": "45 yards"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'distance': r"|".join(pc.DISTANCES)
+    }
+
+    pattern = r"%(punter)s punts %(distance)s out of bounds" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
 
 def parse_punt_downed(play_description: str) -> dict or None:
-    pass
+    """
+    Given a play by play description, if it's a PUNT_DOWNED,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_DOWNED should be of the form:
+        {Player Name} punts {distance} downed by {Player Name}
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards downed by Cordarrelle Patterson"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "distance": "45 yards",
+            "downer": "Cordarrelle Patterson"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'distance': r"|".join(pc.DISTANCES),
+        'downer': pc.PLAYER
+    }
+
+    pattern = r"%(punter)s punts %(distance)s downed by %(downer)s" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
 
 def parse_punt_fair_catch(play_description: str) -> dict or None:
-    pass
+    """
+    Given a play by play description, if it's a PUNT_FAIR_CATCH,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_FAIR_CATCH should be of the form:
+        {Player Name} punts {distance}, fair catch by {Player Name} at {yardage}
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards, fair catch by Cordarrelle Patterson at DET-10"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "punt_distance": "45 yards",
+            "returner": "Cordarrelle Patterson",
+            "yardage": "DET-10"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'punt_distance': r"|".join(pc.DISTANCES),
+        'returner': pc.PLAYER,
+        'yardage': pc.YARDAGE
+    }
+
+    pattern = r"%(punter)s punts %(punt_distance)s, fair catch by %(returner)s at %(yardage)s" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
+
+def parse_punt_returned(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a PUNT_RETURNED,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_RETURNED should be of the form:
+        {Player Name} punts {distance}, returned by {Player Name} for {distance} [(tackle by {tackler})]
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards, returned by Cordarrelle Patterson for 27 yards"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "punt_distance": "45 yards",
+            "returner": "Cordarrelle Patterson",
+            "return_distance": "27 yards",
+            "tackler": None
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'punt_distance': r"|".join(pc.DISTANCES),
+        'returner': pc.PLAYER,
+        'return_distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
+    }
+
+    pattern = r"%(punter)s punts %(punt_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
