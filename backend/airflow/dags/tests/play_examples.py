@@ -45,6 +45,15 @@ TOUCHDOWN_EXAMPLES = [
     ', touchdown'
 ]
 
+PENALTY_EXAMPLES = [
+    'Unnecessary Roughness',
+    'Offensive Holding',
+    'Defensive Holding (Offsetting)',
+    'Defensive Pass Interference',
+    'Face Mask (15 Yards)',
+    'Player Out of Bounds on Kick'
+]
+
 # Ex: David Montgomery right tackle for 10 yards, touchdown 
 RUN_EXAMPLES = [
     f'{player} {direction} for {distance}{tackler}'
@@ -138,6 +147,15 @@ PUNT_RETURNED = [
     for tackler in TACKLER_EXAMPLES
 ]
 
+# Ex: Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards (no play) 
+PENALTY_EXAMPLES = [
+    f'Penalty on {player}: {penalty}, {distance}{no_play}'
+    for player in PLAYER_EXAMPLES
+    for penalty in PENALTY_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+    for no_play in [' (no play)', '']
+]
+
 ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
@@ -149,7 +167,8 @@ ALL_PLAY_EXAMPLES = {
     'PUNT_OUT_OF_BOUNDS': PUNT_OUT_OF_BOUNDS_EXAMPLES,
     'PUNT_DOWNED': PUNT_DOWNED_EXAMPLES,
     'PUNT_FAIR_CATCH': PUNT_FAIR_CATCH_EXAMPLES,
-    'PUNT_RETURNED': PUNT_RETURNED
+    'PUNT_RETURNED': PUNT_RETURNED,
+    'PENALTY': PENALTY_EXAMPLES
 }
 ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
 

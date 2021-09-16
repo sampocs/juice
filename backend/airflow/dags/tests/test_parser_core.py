@@ -55,3 +55,12 @@ class TestParseCore:
         for yardage in YARDAGE_EXAMPLES:
             assert re.match(pc.YARDAGE, yardage), \
                 f'Example yardage ({yardage}) did not match Yardage regex'
+
+
+    def test_penalty_regex(self):
+        """
+        Test that the penalty regex is working properly
+        """
+        for penalty in PENALTY_EXAMPLES:
+            assert re.match(pc.PENALTY, penalty), \
+                f'Example penalty ({penalty}) did not match Penalty regex'

@@ -344,3 +344,33 @@ def parse_punt_returned(play_description: str) -> dict or None:
     pattern = r"%(punter)s punts %(punt_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
 
     return re.match(pattern, play_description)
+
+
+def parse_penalty(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a PENALTY,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PENALTY should be of the form:
+        Penalty on {Player Name}: {penalty}, {distance} [(no play)]
+
+    Example: 
+        play_description = "Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards"
+        returns: {
+            "player": "Ndamukong Suh", 
+            "penalty": "Unnecessary Roughness",
+            "distance": "15 yards",
+            "no_play": None
+        }
+    """
+    expressions = {
+        'player': pc.PLAYER,
+        'penalty': pc.PENALTY,
+        'distance': r"|".join(pc.DISTANCES),
+        'no_play': pc.NO_PLAY
+    }
+
+    pattern = r"Penalty on %(player)s: %(penalty)s, %(distance)s( \(%(no_play)s\))?" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
