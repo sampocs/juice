@@ -374,3 +374,53 @@ def parse_penalty(play_description: str) -> dict or None:
     pattern = r"Penalty on %(player)s: %(penalty)s, %(distance)s( \(%(no_play)s\))?" % wrap_expressions(expressions)
 
     return re.match(pattern, play_description)
+
+
+def parse_timeout(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a TIMEOUT,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    TIMEOUT should be of the form:
+        Timeout {number} by {Team}
+
+    Example: 
+        play_description = "Timeout #1 by Chicago Bears"
+        returns: {
+            "timeout_number": "#1", 
+            "team": "Chicago Bears"
+        }
+    """
+    expressions = {
+        'timeout_number': r"#[\d]",
+        'team': pc.TEAM_NAME
+    }
+
+    pattern = r"Timeout %(timeout_number)s by %(team)s" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
+
+def parse_spike(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a SPIKE,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    SPIKE should be of the form:
+        {Player Name} spiked the ball
+
+    Example: 
+        play_description = "Justin Fields spiked the ball"
+        returns: {
+            "player": "Justin Fields"
+        }
+    """
+    expressions = {
+        'player': pc.PLAYER
+    }
+
+    pattern = r"%(player)s spiked the ball" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)

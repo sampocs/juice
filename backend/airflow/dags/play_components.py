@@ -36,3 +36,5 @@ FIELD_GOAL_STATUSES = [
 PENALTY = r"[a-zA-Z \d()]+"
 
 NO_PLAY = r"no play"
+
+TEAM_NAME = r"[a-zA-Z ]+"

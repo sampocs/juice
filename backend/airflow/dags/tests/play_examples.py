@@ -54,6 +54,12 @@ PENALTY_EXAMPLES = [
     'Player Out of Bounds on Kick'
 ]
 
+TEAM_EXAMPLES = [
+    'Chicago Bears',
+    'Washington Football Team',
+    'Las Vegas Raiders'
+]
+
 # Ex: David Montgomery right tackle for 10 yards, touchdown 
 RUN_EXAMPLES = [
     f'{player} {direction} for {distance}{tackler}'
@@ -156,6 +162,17 @@ PENALTY_EXAMPLES = [
     for no_play in [' (no play)', '']
 ]
 
+TIMEOUT_EXAMPLES = [
+    f'Timeout #{i} by {team}'
+    for i in range(1, 4)
+    for team in TEAM_EXAMPLES
+]
+
+SPIKE_EXAMPLES = [
+    f'{player} spiked the ball'
+    for player in PLAYER_EXAMPLES
+]
+
 ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
@@ -168,7 +185,9 @@ ALL_PLAY_EXAMPLES = {
     'PUNT_DOWNED': PUNT_DOWNED_EXAMPLES,
     'PUNT_FAIR_CATCH': PUNT_FAIR_CATCH_EXAMPLES,
     'PUNT_RETURNED': PUNT_RETURNED,
-    'PENALTY': PENALTY_EXAMPLES
+    'PENALTY': PENALTY_EXAMPLES,
+    'TIMEOUT': TIMEOUT_EXAMPLES,
+    'SPIKE': SPIKE_EXAMPLES
 }
 ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
 

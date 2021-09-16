@@ -55,9 +55,45 @@ class TestParsePenalty:
         match = pbp_parser.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
-    # Timeout
-    # Spike
-    # Penalty
-    # Sack
-    # Fumble
-    # Interception
+
+class TestParseMisc:
+
+    def test_timeout_all_examples(self):
+        """
+        Test that the TIMEOUT matches 
+        """
+        play_examples.check_across_all_examples('TIMEOUT', pbp_parser.parse_timeout)
+
+
+    def test_timeout(self):
+        """
+        Test match dict from timeout
+        """
+        description = 'Timeout #1 by Chicago Bears'
+        expected = {
+            'timeout_number': '#1',
+            'team': 'Chicago Bears',
+        }
+        match = pbp_parser.parse_timeout(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_spike_all_examples(self):
+        """
+        Test that the SPIKE matches 
+        """
+        play_examples.check_across_all_examples('SPIKE', pbp_parser.parse_spike)
+    
+
+    def test_spike(self):
+        """
+        Test match dict from spike
+        """
+        description = 'Justin Fields spiked the ball'
+        expected = {
+            'player': 'Justin Fields',
+        }
+        match = pbp_parser.parse_spike(description)
+        assert match and (match.groupdict() == expected)
+
+
