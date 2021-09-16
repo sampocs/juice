@@ -1,6 +1,7 @@
 import re
 import play_components as pc
 
+
 def wrap_expressions(expressions: dict) -> dict:
     """
     Given a dictionary mapping variable names to regex patterns,
@@ -173,3 +174,70 @@ def parse_kickoff_returned(play_description: str) -> dict or None:
     pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
 
     return re.match(pattern, play_description)
+
+
+def parse_field_goal(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a FIELD_GOAL,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    FIELD_GOAL should be of the form:
+        {Player Name} {distance} field goal {good | no good}
+
+    Example: 
+        play_description = "Robbie Gould 43 yard field goal good"
+        returns: {
+            "kicker": "Robbie Gould", 
+            "distance": "43 yards", 
+            "status": "good"
+        }
+    """
+    expressions = {
+        'kicker': pc.PLAYER,
+        'distance': r"|".join(pc.DISTANCES),
+        'status': r"|".join(pc.FIELD_GOAL_STATUSES)
+    }
+
+    pattern = r"%(kicker)s %(distance)s field goal %(status)s" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
+
+def parse_extra_point(play_description: str) -> dict or None:
+    """
+    Given a play by play description, if it's a EXTRA_POINT,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    EXTRA_POINT should be of the form:
+        {Player Name} kicks extra point {good | no good}
+
+    Example: 
+        play_description = "Robbie Gould kicks extra point good"
+        returns: {
+            "kicker": "Robbie Gould", 
+            "status": "good"
+        }
+    """
+    expressions = {
+        'kicker': pc.PLAYER,
+        'status': r"|".join(pc.FIELD_GOAL_STATUSES)
+    }
+
+    pattern = r"%(kicker)s kicks extra point %(status)s" % wrap_expressions(expressions)
+
+    return re.match(pattern, play_description)
+
+
+def parse_punt_out(play_description: str) -> dict or None:
+    pass
+
+def parse_punt_returned(play_description: str) -> dict or None:
+    pass
+
+def parse_punt_downed(play_description: str) -> dict or None:
+    pass
+
+def parse_punt_fair_catch(play_description: str) -> dict or None:
+    pass

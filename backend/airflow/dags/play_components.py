@@ -1,3 +1,5 @@
+PLAYER = r"[a-zA-Z, .'-]+[a-zA-Z]" # can't end with a space
+
 RUN_DIRECTIONS = [
     r"up the middle", 
     r"left guard", 
@@ -22,4 +24,7 @@ DISTANCES = [
     r"no gain"
 ]
 
-PLAYER = r"[a-zA-Z, .'-]+[a-zA-Z]" # can't end with a space
+FIELD_GOAL_STATUSES = [
+    r"good",
+    r"no good"
+]

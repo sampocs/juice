@@ -80,12 +80,29 @@ KICKOFF_RETURNED_EXAMPLES = [
     for tackler in TACKLER_EXAMPLES
 ]
 
+# Ex: Robbie Gould 43 yard field goal good
+FIELD_GOAL_EXAMPLES = [
+    f'{kicker} {distance} field goal {status}'
+    for kicker in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+    for status in pc.FIELD_GOAL_STATUSES
+]
+
+# Ex: Robbie Gould kicks extra point good
+EXTRA_POINT_EXAMPLES = [
+    f'{kicker} kicks extra point {status}'
+    for kicker in PLAYER_EXAMPLES
+    for status in pc.FIELD_GOAL_STATUSES
+]
+
 ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
     'PASS_INCOMPLETE': PASS_INCOMPLETE_EXAMPLES,
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
-    'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES
+    'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
+    'FIELD_GOAL': FIELD_GOAL_EXAMPLES,
+    'EXTRA_POINT': EXTRA_POINT_EXAMPLES
 }
 ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
 
