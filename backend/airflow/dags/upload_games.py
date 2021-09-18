@@ -3,7 +3,7 @@ from airflow.utils.dates import days_ago
 import pandas as pd
 import numpy as np
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from typing import Dict
 
@@ -28,8 +28,27 @@ def scrape_regular_season_games(year: int) -> pd.DataFrame:
     df = df[df['Week'].str.startswith('Pre') == False]
 
     # Fix columns
-    df = df.drop(columns='Unnamed: 5')
-    df.columns = ['week', 'dow', 'date', 'away_team', 'away_score', 'home_team', 'home_score', 'time']
+    # At the start of the season, they don't have the points columns
+    if len(df.columns) == 9:
+        df.columns = ['week', 'dow', 'date', 'away_team', 'at', 'away_score', 'home_team', 'home_score', 'time']
+    else:
+        df.columns = [
+            'week', 'dow', 'date', 'time', 
+            'away_team', 'at', 'home_team', 'boxscore', 
+            'away_score', 'home_score', 
+            'home_yards', 'tow', 'away_yards', 'tol'
+        ]
+
+    # Drop columns (if they exist)
+    drop_columns = set(df.columns).intersection({'boxscore', 'home_yards', 'away_yards', 'tow', 'tol'})
+    df = df.drop(columns=drop_columns)
+
+    # If the season has already begun, the teams will be displayed as winner/loser (rather than home/away)
+    # so we'll want to switch the two columns
+    df['home_temp'] = df['home_team']
+    df['away_temp'] = df['away_team']
+    df['away_team'] = df.apply(lambda df: df['away_temp'] if df['at'] == '@' else df['home_temp'], axis=1)
+    df['home_team'] = df.apply(lambda df: df['home_temp'] if df['at'] == '@' else df['away_temp'], axis=1)
 
     # Add season (year) and week columns
     df['season'] = year
@@ -64,15 +83,22 @@ def format_for_db(df: pd.DataFrame, year: int) -> pd.DataFrame:
         date_string = row['date']
         time_string = row['time']
         
-        month = datetime.strptime(date_string, '%B %d').month
-        if month < 3:
-            date_string += f' {year + 1}'
-        else:
-            date_string += f' {year}'
-            
+        # The date is formatted differently before and during the season
+        try:
+            date = datetime.strptime(date_string + f' {year}', '%B %d %Y')
+            if date.month < 3:
+                date = date + timedelta(days=365)
+            time = datetime.strptime(time_string, '%H:%M %p')
+
+        except:
+            date = datetime.strptime(date_string, '%Y-%m-%d')
+            time = datetime.strptime(time_string, '%H:%M%p')
+
+        date_string = date.strftime('%Y-%m-%d')      
+        time_string = time.strftime('%H:%M:%S')  
         datetime_string = f'{date_string} {time_string}'
             
-        dt = datetime.strptime(datetime_string, '%B %d %Y %H:%M %p')
+        dt = datetime.strptime(datetime_string, '%Y-%m-%d %H:%M:%S')
 
         return dt
     

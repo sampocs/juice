@@ -1,4 +1,4 @@
-team_id,org_id,city,mascot,start_year,active,pfr_name
+team_id,org_id,city,mascot,start_year,active,pfr_id
 ARI,ARI,Arizona,Cardinals,1994,TRUE,crd
 ATL,ATL,Atlanta,Falcons,1966,TRUE,atl
 BAL,BAL,Baltimore,Ravens,1996,TRUE,rav
