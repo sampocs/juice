@@ -21,16 +21,60 @@ def wrap_expressions(expressions: dict) -> dict:
     Example Usage:
         >>> regex_components = {"year": r"[d]{4}", "month": r"[d]{2}"}
         >>> pattern = r"%(year)s %(month)s" % wrap_expressions(regex_components)
-        >>> re.match(pattern, "2021 01").groupdict()
+        >>> re.search(pattern, "2021 01").groupdict()
         {"year": "2021", "month": "01"}
     """
     return {var: r"(?P<%s>%s)" % (var, regex) for (var, regex) in expressions.items()}
 
 
-def parse_run_play(play_description: str) -> dict or None:
+def make_optional(expression: str, space_prefix: bool = True) -> str:
+    """
+    Makes a regex expression optional by adding parenthesis and a ?
+    """
+    prefix = r"( " if space_prefix else r"("
+    return prefix + (r"%s)?" % expression)
+
+
+def replace_tackler_with_tackle_event(expressions: dict) -> dict:
+    """
+    Given a dict with the regex for a tackler, replaces the expression with the full optional
+    string that indicates a tackle event
+    This means adding the full "tackle by" string and making the whole string optional
+
+    Ex: {'tackler': r"(P?<tackler>{tackler_regex}"}
+        => {'tackler': r"( (tackle by (P?<tackler>{tackler_regex}))?"}
+    """
+    assert 'tackler' in expressions.keys(), \
+        'Must supply the regex for the tackler. "tackler" key must be present in expressions dict'
+
+    tackler_regex = r"\(tackle by %s\)" % expressions['tackler']
+    expressions['tackler'] = make_optional(tackler_regex)
+
+    return expressions
+
+
+def replace_defender_with_defended_event(expressions: dict) -> dict:
+    """
+    Given a dict with the regex for a defended pass, replaces the expression with the full optional
+    string that indicates a defended event
+    This means adding the full "defended by" string and making the whole string optional
+
+    Ex: {'defender': r"(P?<defender>{defender_regex}"}
+        => {'defender': r"( (defended by (P?<tackler>{defender_regex}))?"}
+    """
+    assert 'defender' in expressions.keys(), \
+        'Must supply the regex for the defender. "defender" key must be present in expressions dict'
+
+    tackler_regex = r"\(defended by %s\)" % expressions['defender']
+    expressions['defender'] = make_optional(tackler_regex)
+
+    return expressions
+
+
+def parse_run_play(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a RUN play,
-    returns the regex match dictionary for each piece of information in the description
+    returns the regex match re.Matchionary for each piece of information in the description
     Otherwise, returns None
 
     RUN plays should be of the form:
@@ -53,11 +97,15 @@ def parse_run_play(play_description: str) -> dict or None:
         'tackler': pc.PLAYER
     }
 
-    pattern = r"%(runner)s %(direction)s for %(distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
-    return re.match(pattern, play_description)
+    # Make tackler optional
+    expressions = wrap_expressions(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
+
+    pattern = r"%(runner)s %(direction)s for %(distance)s%(tackler)s" % expressions
+    return re.search(pattern, play_description)
 
 
-def parse_pass_complete_play(play_description: str) -> dict or None:
+def parse_pass_complete_play(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PASS_COMPLETE play,
     returns the regex match dictionary for each piece of information in the description
@@ -82,13 +130,16 @@ def parse_pass_complete_play(play_description: str) -> dict or None:
         'distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
+    expressions = wrap_expressions(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
+    expressions['direction'] = make_optional(expressions['direction'])
 
-    pattern = r"%(passer)s pass complete %(direction)s to %(reciever)s for %(distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
+    pattern = r"%(passer)s pass complete%(direction)s to %(reciever)s for %(distance)s%(tackler)s" % expressions
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_pass_incomplete_play(play_description: str) -> dict or None:
+def parse_pass_incomplete_play(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PASS_INCOMPLETE play,
     returns the regex match dictionary for each piece of information in the description
@@ -112,13 +163,15 @@ def parse_pass_incomplete_play(play_description: str) -> dict or None:
         'reciever': pc.PLAYER,
         'defender': pc.PLAYER
     }
+    expressions = wrap_expressions(expressions)
+    expressions = replace_defender_with_defended_event(expressions)
 
-    pattern = r"%(passer)s pass incomplete %(direction)s intended for %(reciever)s( \(defended by %(defender)s\))?" % wrap_expressions(expressions)
+    pattern = r"%(passer)s pass incomplete %(direction)s intended for %(reciever)s%(defender)s" % expressions
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_kickoff_touchback(play_description: str) -> dict or None:
+def parse_kickoff_touchback(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a KICKOFF TOUCHBACK,
     returns the regex match dictionary for each piece of information in the description
@@ -141,10 +194,10 @@ def parse_kickoff_touchback(play_description: str) -> dict or None:
 
     pattern = r"%(kicker)s kicks off %(distance)s, touchback" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_kickoff_returned(play_description: str) -> dict or None:
+def parse_kickoff_returned(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a KICKOFF RETURNED,
     returns the regex match dictionary for each piece of information in the description
@@ -170,13 +223,15 @@ def parse_kickoff_returned(play_description: str) -> dict or None:
         'return_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
+    expressions = wrap_expressions(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
+    pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s%(tackler)s" % expressions
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_field_goal(play_description: str) -> dict or None:
+def parse_field_goal(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a FIELD_GOAL,
     returns the regex match dictionary for each piece of information in the description
@@ -201,10 +256,10 @@ def parse_field_goal(play_description: str) -> dict or None:
 
     pattern = r"%(kicker)s %(distance)s field goal %(status)s" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_extra_point(play_description: str) -> dict or None:
+def parse_extra_point(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a EXTRA_POINT,
     returns the regex match dictionary for each piece of information in the description
@@ -227,10 +282,10 @@ def parse_extra_point(play_description: str) -> dict or None:
 
     pattern = r"%(kicker)s kicks extra point %(status)s" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_punt_out(play_description: str) -> dict or None:
+def parse_punt_out(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PUNT_OUT_OF_BOUNDS,
     returns the regex match dictionary for each piece of information in the description
@@ -253,10 +308,10 @@ def parse_punt_out(play_description: str) -> dict or None:
 
     pattern = r"%(punter)s punts %(distance)s out of bounds" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_punt_downed(play_description: str) -> dict or None:
+def parse_punt_downed(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PUNT_DOWNED,
     returns the regex match dictionary for each piece of information in the description
@@ -281,10 +336,10 @@ def parse_punt_downed(play_description: str) -> dict or None:
 
     pattern = r"%(punter)s punts %(distance)s downed by %(downer)s" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_punt_fair_catch(play_description: str) -> dict or None:
+def parse_punt_fair_catch(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PUNT_FAIR_CATCH,
     returns the regex match dictionary for each piece of information in the description
@@ -311,10 +366,10 @@ def parse_punt_fair_catch(play_description: str) -> dict or None:
 
     pattern = r"%(punter)s punts %(punt_distance)s, fair catch by %(returner)s at %(yardage)s" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_punt_returned(play_description: str) -> dict or None:
+def parse_punt_returned(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PUNT_RETURNED,
     returns the regex match dictionary for each piece of information in the description
@@ -340,13 +395,15 @@ def parse_punt_returned(play_description: str) -> dict or None:
         'return_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
+    expressions = wrap_expressions(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"%(punter)s punts %(punt_distance)s, returned by %(returner)s for %(return_distance)s( \(tackle by %(tackler)s\))?" % wrap_expressions(expressions)
+    pattern = r"%(punter)s punts %(punt_distance)s, returned by %(returner)s for %(return_distance)s%(tackler)s" % expressions
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_penalty(play_description: str) -> dict or None:
+def parse_penalty(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PENALTY,
     returns the regex match dictionary for each piece of information in the description
@@ -368,15 +425,19 @@ def parse_penalty(play_description: str) -> dict or None:
         'player': pc.PLAYER,
         'penalty': pc.PENALTY,
         'distance': r"|".join(pc.DISTANCES),
+        'response': r"|".join(pc.PENALTY_RESPONSES),
         'no_play': pc.NO_PLAY
     }
+    expressions = wrap_expressions(expressions)
+    expressions['response'] = make_optional(r"\(%s\)" % expressions['response'])
+    expressions['no_play'] = make_optional(r"\(%s\)" % expressions['no_play'])
 
-    pattern = r"Penalty on %(player)s: %(penalty)s, %(distance)s( \(%(no_play)s\))?" % wrap_expressions(expressions)
+    pattern = r"Penalty on %(player)s: %(penalty)s, %(distance)s%(response)s%(no_play)s" % expressions
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_timeout(play_description: str) -> dict or None:
+def parse_timeout(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a TIMEOUT,
     returns the regex match dictionary for each piece of information in the description
@@ -399,10 +460,10 @@ def parse_timeout(play_description: str) -> dict or None:
 
     pattern = r"Timeout %(timeout_number)s by %(team)s" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
 
 
-def parse_spike(play_description: str) -> dict or None:
+def parse_spike(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a SPIKE,
     returns the regex match dictionary for each piece of information in the description
@@ -423,4 +484,27 @@ def parse_spike(play_description: str) -> dict or None:
 
     pattern = r"%(player)s spiked the ball" % wrap_expressions(expressions)
 
-    return re.match(pattern, play_description)
+    return re.search(pattern, play_description)
+
+
+def parse_kneel(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a KNEEL,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    KNEEL should be of the form:
+        {Player Name} knees for {distance}
+
+    Example: 
+        play_description = "Justin Fields kneels for -1 yards"
+        returns: {
+            "player": "Justin Fields"
+        }
+    """
+    expressions = {
+        'player': pc.PLAYER
+    }
+    pattern = r"%(player)s kneels" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)

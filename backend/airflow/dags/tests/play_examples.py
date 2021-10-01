@@ -45,13 +45,18 @@ TOUCHDOWN_EXAMPLES = [
     ', touchdown'
 ]
 
-PENALTY_EXAMPLES = [
+PENALTY_NAME_EXAMPLES = [
     'Unnecessary Roughness',
     'Offensive Holding',
     'Defensive Holding (Offsetting)',
     'Defensive Pass Interference',
     'Face Mask (15 Yards)',
     'Player Out of Bounds on Kick'
+]
+
+PENALTY_RESPONSE_EXAMPLES = [
+    '',
+    *[f' ({response})' for response in pc.PENALTY_RESPONSES]
 ]
 
 TEAM_EXAMPLES = [
@@ -71,9 +76,9 @@ RUN_EXAMPLES = [
 
 # Ex: Justin Fields pass complete deep right to Allen Robinson for 45 yards, touchdown
 PASS_COMPLETE_EXAMPLES = [
-     f'{player} pass complete {direction} to {player} for {distance}{tackler}{touchdown}'
+     f'{player} pass complete{direction} to {player} for {distance}{tackler}{touchdown}'
     for player in PLAYER_EXAMPLES
-    for direction in pc.PASS_DIRECTIONS
+    for direction in [' ' + direction for direction in pc.PASS_DIRECTIONS] + ['']
     for distance in DISTANCE_EXAMPLES
     for tackler in TACKLER_EXAMPLES
     for touchdown in TOUCHDOWN_EXAMPLES
@@ -155,10 +160,11 @@ PUNT_RETURNED = [
 
 # Ex: Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards (no play) 
 PENALTY_EXAMPLES = [
-    f'Penalty on {player}: {penalty}, {distance}{no_play}'
+    f'Penalty on {player}: {penalty}, {distance}{response}{no_play}'
     for player in PLAYER_EXAMPLES
-    for penalty in PENALTY_EXAMPLES
+    for penalty in PENALTY_NAME_EXAMPLES
     for distance in DISTANCE_EXAMPLES
+    for response in PENALTY_RESPONSE_EXAMPLES 
     for no_play in [' (no play)', '']
 ]
 
@@ -170,6 +176,11 @@ TIMEOUT_EXAMPLES = [
 
 SPIKE_EXAMPLES = [
     f'{player} spiked the ball'
+    for player in PLAYER_EXAMPLES
+]
+
+KNEEL_EXAMPLES = [
+    f'{player} kneels for -1 yards'
     for player in PLAYER_EXAMPLES
 ]
 
@@ -187,7 +198,8 @@ ALL_PLAY_EXAMPLES = {
     'PUNT_RETURNED': PUNT_RETURNED,
     'PENALTY': PENALTY_EXAMPLES,
     'TIMEOUT': TIMEOUT_EXAMPLES,
-    'SPIKE': SPIKE_EXAMPLES
+    'SPIKE': SPIKE_EXAMPLES,
+    'KNEEL': KNEEL_EXAMPLES
 }
 ALL_PLAY_TYPES = list(ALL_PLAY_EXAMPLES.keys())
 

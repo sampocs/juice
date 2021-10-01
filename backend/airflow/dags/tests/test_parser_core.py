@@ -26,7 +26,7 @@ class TestParseCore:
             'year': '2019',
             'month': '01'
         }
-        assert re.match(test_regex, test_string).groupdict() == expected_matching
+        assert re.search(test_regex, test_string).groupdict() == expected_matching
 
     
     def test_distance_regex(self):
@@ -35,7 +35,7 @@ class TestParseCore:
         """
         all_distance_pattern = r"|".join(DISTANCE_EXAMPLES)
         for distance in DISTANCE_EXAMPLES:
-            assert re.match(all_distance_pattern, distance), \
+            assert re.search(all_distance_pattern, distance), \
                 f'Example distance ({distance}) did not match distance regex'
 
 
@@ -44,7 +44,7 @@ class TestParseCore:
         Test that the player regex is working properly
         """
         for player in PLAYER_EXAMPLES:
-            assert re.match(pc.PLAYER, player), \
+            assert re.search(pc.PLAYER, player), \
                 f'Example player ({player}) did not match Player regex'
 
 
@@ -53,7 +53,7 @@ class TestParseCore:
         Test that the yardage regex is working properly
         """
         for yardage in YARDAGE_EXAMPLES:
-            assert re.match(pc.YARDAGE, yardage), \
+            assert re.search(pc.YARDAGE, yardage), \
                 f'Example yardage ({yardage}) did not match Yardage regex'
 
 
@@ -62,5 +62,5 @@ class TestParseCore:
         Test that the penalty regex is working properly
         """
         for penalty in PENALTY_EXAMPLES:
-            assert re.match(pc.PENALTY, penalty), \
+            assert re.search(pc.PENALTY, penalty), \
                 f'Example penalty ({penalty}) did not match Penalty regex'

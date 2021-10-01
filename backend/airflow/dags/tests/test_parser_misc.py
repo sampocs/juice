@@ -20,6 +20,23 @@ class TestParsePenalty:
             'player': 'Ndamukong Suh',
             'penalty': 'Unnecessary Roughness',
             'distance': '15 yards',
+            'response': None,
+            'no_play': None
+        }
+        match = pbp_parser.parse_penalty(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_penalty_response(self):
+        """
+        Test match dict with penalty response
+        """
+        description = 'Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards (accepted)'
+        expected = {
+            'player': 'Ndamukong Suh',
+            'penalty': 'Unnecessary Roughness',
+            'distance': '15 yards',
+            'response': 'accepted',
             'no_play': None
         }
         match = pbp_parser.parse_penalty(description)
@@ -35,6 +52,7 @@ class TestParsePenalty:
             'player': 'Ndamukong Suh',
             'penalty': 'Unnecessary Roughness',
             'distance': '15 yards',
+            'response': None,
             'no_play': 'no play'
         }
         match = pbp_parser.parse_penalty(description)
@@ -50,11 +68,34 @@ class TestParsePenalty:
             'player': 'Ndamukong Suh',
             'penalty': 'Face Mask (15 yards)',
             'distance': '15 yards',
+            'response': None,
             'no_play': None
         }
         match = pbp_parser.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
+
+class TestParseBigDefensivePlay:
+    def test_sack_all_examples(self):
+        pass
+
+    def test_sack(self):
+        pass
+
+    def test_interception_all_examples(self):
+        pass
+
+    def test_interception(self):
+        pass
+
+    def test_interception_with_tackle(self):
+        pass
+
+    def test_fumble_all_examples(self):
+        pass
+
+    def test_fumble(self):
+        pass
 
 class TestParseMisc:
 
@@ -97,3 +138,20 @@ class TestParseMisc:
         assert match and (match.groupdict() == expected)
 
 
+    def test_kneel_all_examples(self):
+        """
+        Test that KNEELs match
+        """
+        play_examples.check_across_all_examples('KNEEL', pbp_parser.parse_kneel)
+
+
+    def test_kneel(self):
+        """
+        Test match dict from kneel
+        """
+        description = 'Justin Fields kneels for -1 yards'
+        expected = {
+            'player': 'Justin Fields',
+        }
+        match = pbp_parser.parse_kneel(description)
+        assert match and (match.groupdict() == expected)

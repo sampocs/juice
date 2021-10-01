@@ -7,7 +7,8 @@ RUN_DIRECTIONS = [
     r"left tackle", 
     r"right tackle", 
     r"left end", 
-    r"right end"
+    r"right end",
+    r"scrambles"
 ]
 
 PASS_DIRECTIONS = [
@@ -33,7 +34,13 @@ FIELD_GOAL_STATUSES = [
     r"no good"
 ]
 
-PENALTY = r"[a-zA-Z \d()]+"
+PENALTY = r"[a-zA-Z \d()/]+"
+
+PENALTY_RESPONSES = [
+    r"accepted",
+    r"declined",
+    r"offset"
+]
 
 NO_PLAY = r"no play"
 
