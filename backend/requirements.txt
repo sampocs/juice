@@ -6,3 +6,4 @@ pandas
 pytz
 lxml
 requests
+pytest
