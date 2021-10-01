@@ -88,11 +88,11 @@ def format_for_db(df: pd.DataFrame, year: int) -> pd.DataFrame:
             date = datetime.strptime(date_string + f' {year}', '%B %d %Y')
             if date.month < 3:
                 date = date + timedelta(days=365)
-            time = datetime.strptime(time_string, '%H:%M %p')
+            time = datetime.strptime(time_string, '%I:%M %p')
 
         except:
             date = datetime.strptime(date_string, '%Y-%m-%d')
-            time = datetime.strptime(time_string, '%H:%M%p')
+            time = datetime.strptime(time_string, '%I:%M%p')
 
         date_string = date.strftime('%Y-%m-%d')      
         time_string = time.strftime('%H:%M:%S')  
