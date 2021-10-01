@@ -19,7 +19,23 @@ class TestParsePassComplete:
         expected = {
             'passer': 'Justin Fields',
             'direction': 'deep right',
-            'reciever': 'Allen Robinson',
+            'receiver': 'Allen Robinson',
+            'distance': '45 yards',
+            'tackler': None
+        }
+        match = pbp_parser.parse_pass_complete_play(description)
+        assert match and (match.groupdict() == expected)
+
+    
+    def test_pass_complete_no_direction(self):
+        """
+        Test match dict for a completed pass play without a direction
+        """
+        description = 'Justin Fields pass complete to Allen Robinson for 45 yards'
+        expected = {
+            'passer': 'Justin Fields',
+            'direction': None,
+            'receiver': 'Allen Robinson',
             'distance': '45 yards',
             'tackler': None
         }
@@ -35,7 +51,7 @@ class TestParsePassComplete:
         expected = {
             'passer': 'Justin Fields',
             'direction': 'deep right',
-            'reciever': 'Allen Robinson',
+            'receiver': 'Allen Robinson',
             'distance': '45 yards',
             'tackler': 'Jalen Ramsey'
         }
@@ -51,7 +67,7 @@ class TestParsePassComplete:
         expected = {
             'passer': 'Justin Fields',
             'direction': 'deep right',
-            'reciever': 'Allen Robinson',
+            'receiver': 'Allen Robinson',
             'distance': '45 yards',
             'tackler': None
         }
@@ -76,11 +92,53 @@ class TestParsePassIncomplete:
         expected = {
             'passer': 'Aaron Rodgers',
             'direction': 'short right',
-            'reciever': 'Davante Adams',
+            'receiver': 'Davante Adams',
             'defender': None
         }
         match = pbp_parser.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)
+
+    
+    def test_pass_incomplete_no_direction(self):
+        """
+        Test match dict for a incompleted pass play without a direction
+        """
+        description = 'Aaron Rodgers pass incomplete intended for Davante Adams'
+        expected = {
+            'passer': 'Aaron Rodgers',
+            'direction': None,
+            'receiver': 'Davante Adams',
+            'defender': None
+        }
+        match = pbp_parser.parse_pass_incomplete_play(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_pass_incomplete_no_intended_for(self):
+        """
+        Test match dict for a incompleted pass play without a reciever
+        """
+        description1 = 'Aaron Rodgers pass incomplete short right'
+        expected1 = {
+            'passer': 'Aaron Rodgers',
+            'direction': 'short right',
+            'receiver': None,
+            'defender': None
+        }
+
+        description2 = 'Aaron Rodgers pass incomplete'
+        expected2 = {
+            'passer': 'Aaron Rodgers',
+            'direction': None,
+            'receiver': None,
+            'defender': None
+        }
+
+        match1 = pbp_parser.parse_pass_incomplete_play(description1)
+        match2 = pbp_parser.parse_pass_incomplete_play(description2)
+
+        assert match1 and (match1.groupdict() == expected1)  
+        assert match2 and (match2.groupdict() == expected2)  
 
 
     def test_pass_incomplete_with_defender(self):
@@ -91,7 +149,7 @@ class TestParsePassIncomplete:
         expected = {
             'passer': 'Aaron Rodgers',
             'direction': 'short right',
-            'reciever': 'Davante Adams',
+            'receiver': 'Davante Adams',
             'defender': 'Jaylon Johnson'
         }
         match = pbp_parser.parse_pass_incomplete_play(description)

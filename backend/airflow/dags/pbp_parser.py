@@ -65,8 +65,26 @@ def replace_defender_with_defended_event(expressions: dict) -> dict:
     assert 'defender' in expressions.keys(), \
         'Must supply the regex for the defender. "defender" key must be present in expressions dict'
 
-    tackler_regex = r"\(defended by %s\)" % expressions['defender']
-    expressions['defender'] = make_optional(tackler_regex)
+    defender_regex = r"\(defended by %s\)" % expressions['defender']
+    expressions['defender'] = make_optional(defender_regex)
+
+    return expressions
+
+
+def replace_receiver_with_intended_event(expressions: dict) -> dict:
+    """
+    Given a dict with the regex for an intended receiver, replaces the expression with the full optional
+    string that indicates a intended event
+    This means adding the full "intended for" string and making the whole string optional
+
+    Ex: {'receiver': r"(P?<receiver>{receiver_regex}"}
+        => {'receiver': r"( (intended for (P?<receiver>{receiver_regex}))?"}
+    """
+    assert 'receiver' in expressions.keys(), \
+        'Must supply the regex for the receiver. "receiver" key must be present in expressions dict'
+
+    receiver_regex = r"intended for %s" % expressions['receiver']
+    expressions['receiver'] = make_optional(receiver_regex)
 
     return expressions
 
@@ -112,7 +130,7 @@ def parse_pass_complete_play(play_description: str) -> re.Match or None:
     Otherwise, returns None
 
     PASS_COMPLETE plays should be of the form:
-        {Player Name} pass complete {direction} to {reciever} for {distance} [(tackle by {tackler})]
+        {Player Name} pass complete [{direction}] to {receiver} for {distance} [(tackle by {tackler})]
 
     Example: 
         play_description = "Justin Fields pass complete deep right to Allen Robinson for 45 yards (tackle by Jalen Ramsey)"
@@ -126,7 +144,7 @@ def parse_pass_complete_play(play_description: str) -> re.Match or None:
     expressions = {
         'passer': pc.PLAYER,
         'direction': r"|".join(pc.PASS_DIRECTIONS),
-        'reciever': pc.PLAYER,
+        'receiver': pc.PLAYER,
         'distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
@@ -134,7 +152,7 @@ def parse_pass_complete_play(play_description: str) -> re.Match or None:
     expressions = replace_tackler_with_tackle_event(expressions)
     expressions['direction'] = make_optional(expressions['direction'])
 
-    pattern = r"%(passer)s pass complete%(direction)s to %(reciever)s for %(distance)s%(tackler)s" % expressions
+    pattern = r"%(passer)s pass complete%(direction)s to %(receiver)s for %(distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
 
@@ -146,7 +164,7 @@ def parse_pass_incomplete_play(play_description: str) -> re.Match or None:
     Otherwise, returns None
 
     PASS_INCOMPLETE  plays should be of the form:
-        {Player Name} pass incomplete {direction} intended for {reciever} [(defended by {tackler})]
+        {Player Name} pass incomplete [{direction}] [intended for {receiver}] [(defended by {tackler})]
 
     Example: 
         play_description = "Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)"
@@ -160,13 +178,15 @@ def parse_pass_incomplete_play(play_description: str) -> re.Match or None:
     expressions = {
         'passer': pc.PLAYER,
         'direction': r"|".join(pc.PASS_DIRECTIONS),
-        'reciever': pc.PLAYER,
+        'receiver': pc.PLAYER,
         'defender': pc.PLAYER
     }
     expressions = wrap_expressions(expressions)
     expressions = replace_defender_with_defended_event(expressions)
+    expressions = replace_receiver_with_intended_event(expressions)
+    expressions['direction'] = make_optional(expressions['direction'])
 
-    pattern = r"%(passer)s pass incomplete %(direction)s intended for %(reciever)s%(defender)s" % expressions
+    pattern = r"%(passer)s pass incomplete%(direction)s%(receiver)s%(defender)s" % expressions
 
     return re.search(pattern, play_description)
 
