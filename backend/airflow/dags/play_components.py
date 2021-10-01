@@ -1,4 +1,4 @@
-PLAYER = r"[a-zA-Z, .'-]+[a-zA-Z]" # can't end with a space
+PLAYER = r"[A-Z][a-zA-Z, .'-]*[a-zA-Z]" # can't end with a space, must start w/ capital
 
 RUN_DIRECTIONS = [
     r"up the middle", 

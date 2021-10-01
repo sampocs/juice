@@ -92,6 +92,24 @@ PASS_INCOMPLETE_EXAMPLES = [
     for defender in DEFENDER_EXAMPLES    
 ]
 
+# Ex: Aaron Rodgers sacked by Khalil Mack for -10 yards
+SACK_FULL_EXAMPLES = [
+    f'{quarterback} sacked by {sacker} for {distance}'
+    for quarterback in PLAYER_EXAMPLES
+    for sacker in PLAYER_EXAMPLES
+    for distance in DISTANCE_EXAMPLES
+]
+
+# Ex: Aaron Rodgers sacked by and Khalil Mack for -10 yards and Akiem Hicks for -10 yards
+SACK_HALF_EXAMPLES = [
+    f'{quarterback} sacked by and {sacker1} for {distance1} and {sacker2} for {distance2}'
+    for quarterback in PLAYER_EXAMPLES
+    for sacker1 in PLAYER_EXAMPLES
+    for distance1 in DISTANCE_EXAMPLES
+    for sacker2 in PLAYER_EXAMPLES
+    for distance2 in DISTANCE_EXAMPLES
+]
+
 # Ex: Robbie Gould kicks off 65 yards, touchback
 KICKOFF_TOUCHBACK_EXAMPLES = [
     f'{player} kicks off {distance}, touchback'
@@ -211,6 +229,8 @@ ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
     'PASS_INCOMPLETE': PASS_INCOMPLETE_EXAMPLES,
+    'SACK_FULL': SACK_FULL_EXAMPLES,
+    'SACK_HALF': SACK_HALF_EXAMPLES,
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
     'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
     'FIELD_GOAL': FIELD_GOAL_EXAMPLES,

@@ -76,11 +76,49 @@ class TestParsePenalty:
 
 
 class TestParseBigDefensivePlay:
-    def test_sack_all_examples(self):
-        pass
+    def test_sack_full_all_examples(self):
+        """
+        Test that the SACK_FULL play parser matches penalties
+        """
+        play_examples.check_across_all_examples('SACK_FULL', pbp_parser.parse_sack_full)
 
-    def test_sack(self):
-        pass
+
+    def test_sack_half_all_examples(self):
+        """
+        Test that the SACK_HALF play parser matches penalties
+        """
+        play_examples.check_across_all_examples('SACK_HALF', pbp_parser.parse_sack_half)
+
+
+    def test_sack_full(self):
+        """
+        Test match dict from sack full
+        """
+        description = 'Aaron Rodgers sacked by Khalil Mack for -10 yards'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'sacker': 'Khalil Mack',
+            'distance': '-10 yards'
+        }
+        match = pbp_parser.parse_sack_full(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_sack_half(self):
+        """
+        Test match dict from sack half
+        """
+        description = 'Aaron Rodgers sacked by and Khalil Mack for -10 yards and Akiem Hicks for -10 yards'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'sacker1': 'Khalil Mack',
+            'sacker2': 'Akiem Hicks',
+            'distance1': '-10 yards',
+            'distance2': '-10 yards'
+        }
+        match = pbp_parser.parse_sack_half(description)
+        assert match and (match.groupdict() == expected)
+
 
     def test_interception_all_examples(self):
         pass
