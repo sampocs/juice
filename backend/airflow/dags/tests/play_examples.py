@@ -40,6 +40,20 @@ DEFENDER_EXAMPLES = [
     *[f'(defended by {player}' for player in PLAYER_EXAMPLES]
 ]
 
+# Ex: (forced by Khalil Mack)
+FORCE_EXAMPLES = [
+    '',
+    *[f' (forced by {player})' for player in PLAYER_EXAMPLES]
+]
+
+# Ex: and returned for 35 yards (tackle by Davante Adams)
+RETURN_DISTANCE_EXAMPLES = [
+    '',
+    *[f'and returned for {distance}{tackler}' 
+        for distance in DISTANCE_EXAMPLES 
+        for tackler in TACKLER_EXAMPLES]
+]
+
 TOUCHDOWN_EXAMPLES = [
     '', # no touchdown
     ', touchdown'
@@ -108,6 +122,16 @@ SACK_HALF_EXAMPLES = [
     for distance1 in DISTANCE_EXAMPLES
     for sacker2 in PLAYER_EXAMPLES
     for distance2 in DISTANCE_EXAMPLES
+]
+
+# Ex: Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Khalil Mack and returned for 45 yards
+FUMBLE_EXAMPLES = [
+    f'{fumbler} fumbles{forcer}, recovered by {recoverer} at {yardage}{return_distance}'
+    for fumbler in PLAYER_EXAMPLES
+    for forcer in FORCE_EXAMPLES
+    for recoverer in PLAYER_EXAMPLES
+    for yardage in YARDAGE_EXAMPLES
+    for return_distance in RETURN_DISTANCE_EXAMPLES
 ]
 
 # Ex: Robbie Gould kicks off 65 yards, touchback
@@ -231,6 +255,7 @@ ALL_PLAY_EXAMPLES = {
     'PASS_INCOMPLETE': PASS_INCOMPLETE_EXAMPLES,
     'SACK_FULL': SACK_FULL_EXAMPLES,
     'SACK_HALF': SACK_HALF_EXAMPLES,
+    'FUMBLE': FUMBLE_EXAMPLES,
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
     'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
     'FIELD_GOAL': FIELD_GOAL_EXAMPLES,

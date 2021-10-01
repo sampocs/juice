@@ -130,10 +130,79 @@ class TestParseBigDefensivePlay:
         pass
 
     def test_fumble_all_examples(self):
-        pass
+        """
+        Test that the FUMBLE play parser matches penalties
+        """
+        play_examples.check_across_all_examples('FUMBLE', pbp_parser.parse_fumble)
+
 
     def test_fumble(self):
-        pass
+        """
+        Test match dict from a fumble
+        """
+        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards (tackle by Davante Adams)'
+        expected = {
+            'fumbler': 'Aaron Rodgers',
+            'forcer': 'Khalil Mack',
+            'recoverer': 'Akiem Hicks',
+            'yardage': 'CHI-10',
+            'return_distance': '-10 yards',
+            'tackler': 'Davante Adams'
+        }
+        match = pbp_parser.parse_fumble(description)
+        assert match and (match.groupdict() == expected)
+
+    
+    def test_fumble_no_return_tackle(self):
+        """
+        Test match dict from a fumble with a return but no tackle
+        """
+        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards'
+        expected = {
+            'fumbler': 'Aaron Rodgers',
+            'forcer': 'Khalil Mack',
+            'recoverer': 'Akiem Hicks',
+            'yardage': 'CHI-10',
+            'return_distance': '-10 yards',
+            'tackler': None
+        }
+        match = pbp_parser.parse_fumble(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_fumble_no_return(self):
+        """
+        Test match dict from a fumble with a return but no tackle
+        """
+        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10'
+        expected = {
+            'fumbler': 'Aaron Rodgers',
+            'forcer': 'Khalil Mack',
+            'recoverer': 'Akiem Hicks',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_fumble(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_fumble_no_force(self):
+        """
+        Test match dict from a fumble with a return but no tackle
+        """
+        description = 'Aaron Rodgers fumbles, recovered by Akiem Hicks at CHI-10'
+        expected = {
+            'fumbler': 'Aaron Rodgers',
+            'forcer': None,
+            'recoverer': 'Akiem Hicks',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_fumble(description)
+        assert match and (match.groupdict() == expected)
+
 
 class TestParseMisc:
 

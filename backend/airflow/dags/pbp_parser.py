@@ -89,6 +89,42 @@ def replace_receiver_with_intended_event(expressions: dict) -> dict:
     return expressions
 
 
+def replace_forcer_with_forced_event(expressions: dict) -> dict:
+    """
+    Given a dict with the regex for a forced fumble, replaces the expression with the full optional
+    string that indicates a forced fumble event
+    This means adding the full "forced by" string and making the whole string optional
+
+    Ex: {'forcer': r"(P?<forcer>{forcer_regex}"}
+        => {'forcer': r"( (forced by (P?<forcer>{forcer_regex}))?"}
+    """
+    assert 'forcer' in expressions.keys(), \
+        'Must supply the regex for the forcer. "forcer" key must be present in expressions dict'
+
+    forcer_regex = r"\(forced by %s\)" % expressions['forcer']
+    expressions['forcer'] = make_optional(forcer_regex)
+
+    return expressions
+
+
+def replace_return_distance_with_return_event(expressions: dict) -> dict:
+    """
+    Given a dict with the regex for a returned fumble distance, replaces the expression with the full optional
+    string that indicates a returned event
+    This means adding the full "returned for" string and making the whole string optional
+
+    Ex: {'return_distance': r"(P?<return_distance>{distance_regex}"}
+        => {'return_distance': r"( and returned for (P?<return_distance>{distance_regex})?"}
+    """
+    assert 'return_distance' in expressions.keys(), \
+        'Must supply the regex for the return distance. "return_distance" key must be present in expressions dict'
+
+    distance_regex = r"and returned for (%s)" % expressions['return_distance']
+    expressions['return_distance'] = make_optional(distance_regex)
+
+    return expressions
+
+
 def parse_run_play(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a RUN play,
@@ -666,5 +702,44 @@ def parse_sack_half(play_description: str) -> re.Match or None:
         'distance2': r"|".join(pc.DISTANCES)
     }
     pattern = r"%(quarterback)s sacked by and %(sacker1)s for %(distance1)s and %(sacker2)s for %(distance2)s" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
+def parse_fumble(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a FUMBLE,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    FUMBLE should be of the form:
+        {Player Name} fumbles [(forced by {Player Name})], 
+        recovered by {Player Name} at {yardage} [and returned for {distance}] [(tackle by {Player Name})]
+
+    Example: 
+        play_description = "Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for 45 yards"
+        returns: {
+            "fumbler": "Aaron Rodgers",
+            "forcer": "Khalil Mack",
+            "recoverer": "Akiem Hicks",
+            "yardage": "CHI-10",
+            "return_distance": "45 yards",
+            "tackler": None
+        }
+    """
+    expressions = {
+        'fumbler': pc.PLAYER,
+        'forcer': pc.PLAYER,
+        'recoverer': pc.PLAYER,
+        'yardage': pc.YARDAGE,
+        'return_distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
+    }
+    expressions = wrap_expressions(expressions)
+    expressions = replace_forcer_with_forced_event(expressions)
+    expressions = replace_return_distance_with_return_event(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
+
+    pattern = r"%(fumbler)s fumbles%(forcer)s, recovered by %(recoverer)s at %(yardage)s%(return_distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
