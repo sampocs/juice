@@ -149,13 +149,36 @@ PUNT_FAIR_CATCH_EXAMPLES = [
 ]
 
 # Ex: Pat O'Donnell punts 45 yards, returned by Cordarrelle Patterson for 27 yards (tackle by Pat O'Donnell)
-PUNT_RETURNED = [
+PUNT_RETURNED_EXAMPLES = [
     f'{punter} punts {punt_distance}, returned by {returner} for {return_distance}{tackler}'
     for punter in PLAYER_EXAMPLES
     for punt_distance in DISTANCE_EXAMPLES
     for returner in PLAYER_EXAMPLES
     for return_distance in DISTANCE_EXAMPLES
     for tackler in TACKLER_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts 45 yards, recovered by Cordarrelle Patterson at CHI-10
+PUNT_RECOVERED_EXAMPLES = [
+    f'{punter} punts {punt_distance}, recovered by {recoverer} at {yardage}'
+    for punter in PLAYER_EXAMPLES
+    for punt_distance in DISTANCE_EXAMPLES
+    for recoverer in PLAYER_EXAMPLES
+    for yardage in YARDAGE_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts 45 yards, touchback
+PUNT_TOUCHBACK_EXAMPLES = [
+    f'{punter} punts {punt_distance}, touchback'
+    for punter in PLAYER_EXAMPLES
+    for punt_distance in DISTANCE_EXAMPLES
+]
+
+# Ex: Pat O'Donnell punts blocked by Miles Killebrew
+PUNT_BLOCKED_EXAMPLES = [
+    f'{punter} punts blocked by {blocker}'
+    for punter in PLAYER_EXAMPLES
+    for blocker in PLAYER_EXAMPLES
 ]
 
 # Ex: Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards (no play) 
@@ -195,7 +218,10 @@ ALL_PLAY_EXAMPLES = {
     'PUNT_OUT_OF_BOUNDS': PUNT_OUT_OF_BOUNDS_EXAMPLES,
     'PUNT_DOWNED': PUNT_DOWNED_EXAMPLES,
     'PUNT_FAIR_CATCH': PUNT_FAIR_CATCH_EXAMPLES,
-    'PUNT_RETURNED': PUNT_RETURNED,
+    'PUNT_RETURNED': PUNT_RETURNED_EXAMPLES,
+    'PUNT_RECOVERED': PUNT_RECOVERED_EXAMPLES,
+    'PUNT_TOUCHBACK': PUNT_TOUCHBACK_EXAMPLES,
+    'PUNT_BLOCKED': PUNT_BLOCKED_EXAMPLES,
     'PENALTY': PENALTY_EXAMPLES,
     'TIMEOUT': TIMEOUT_EXAMPLES,
     'SPIKE': SPIKE_EXAMPLES,

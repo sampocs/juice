@@ -165,6 +165,27 @@ class TestPunt:
         play_examples.check_across_all_examples('PUNT_RETURNED', pbp_parser.parse_punt_returned)
 
 
+    def test_punt_recovered_all_examples(self):
+        """
+        Test that the PUNT_RECOVERED play parser matches recovered punts
+        """
+        play_examples.check_across_all_examples('PUNT_RECOVERED', pbp_parser.parse_punt_recovered)
+
+    
+    def test_punt_touchback_all_examples(self):
+        """
+        Test that the PUNT_TOUCHBACK play parser matches touchback punts
+        """
+        play_examples.check_across_all_examples('PUNT_TOUCHBACK', pbp_parser.parse_punt_touchback)
+
+    
+    def test_punt_blocked_all_examples(self):
+        """
+        Test that the PUNT_BLOCKED play parser matches blocked punts
+        """
+        play_examples.check_across_all_examples('PUNT_BLOCKED', pbp_parser.parse_punt_blocked)
+
+
     def test_punt_out_of_bounds(self):
         """
         Test match dict from punt out of bounds
@@ -236,4 +257,45 @@ class TestPunt:
             'tackler': "Pat O'Donnell"
         }
         match = pbp_parser.parse_punt_returned(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_punt_recovered(self):
+        """
+        Test match dict from punt recovered 
+        """
+        description = "Pat O'Donnell punts 45 yards, recovered by Cordarrelle Patterson at CHI-10"
+        expected = {
+            'punter': "Pat O'Donnell", 
+            'punt_distance': '45 yards',
+            'recoverer': 'Cordarrelle Patterson',
+            'yardage': 'CHI-10',
+        }
+        match = pbp_parser.parse_punt_recovered(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_punt_touchback(self):
+        """
+        Test match dict from punt touchback 
+        """
+        description = "Pat O'Donnell punts 45 yards, touchback"
+        expected = {
+            'punter': "Pat O'Donnell", 
+            'punt_distance': '45 yards'
+        }
+        match = pbp_parser.parse_punt_touchback(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_punt_blocked(self):
+        """
+        Test match dict from punt blocked 
+        """
+        description = "Pat O'Donnell punts blocked by Miles Killebrew"
+        expected = {
+            'punter': "Pat O'Donnell", 
+            'blocker': 'Miles Killebrew'
+        }
+        match = pbp_parser.parse_punt_blocked(description)
         assert match and (match.groupdict() == expected)

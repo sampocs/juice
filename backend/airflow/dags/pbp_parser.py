@@ -423,6 +423,88 @@ def parse_punt_returned(play_description: str) -> re.Match or None:
     return re.search(pattern, play_description)
 
 
+def parse_punt_recovered(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a PUNT_RECOVERED,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_RECOVERED should be of the form:
+        {Player Name} punts {distance}, recovered by {Player Name} at {yardage}
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards, recovered by Cordarrelle Patterson at CHI-10"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "punt_distance": "45 yards",
+            "recoverer": "Cordarrelle Patterson",
+            "yardage": "CHI-10"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'punt_distance': r"|".join(pc.DISTANCES),
+        'recoverer': pc.PLAYER,
+        'yardage': pc.YARDAGE
+    }
+
+    pattern = r"%(punter)s punts %(punt_distance)s, recovered by %(recoverer)s at %(yardage)s" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
+def parse_punt_touchback(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a PUNT_TOUCHBACK,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_TOUCHBACK should be of the form:
+        {Player Name} punts {distance}, touchback
+
+    Example: 
+        play_description = "Pat O'Donnell punts 45 yards, touchback"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "punt_distance": "45 yards"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'punt_distance': r"|".join(pc.DISTANCES)
+    }
+
+    pattern = r"%(punter)s punts %(punt_distance)s, touchback" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
+def parse_punt_blocked(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a PUNT_BLOCKED,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    PUNT_BLOCKED should be of the form:
+        {Player Name} punts blocked by {Player Name}
+
+    Example: 
+        play_description = "Pat O'Donnell punts blocked by Miles Killebrew"
+        returns: {
+            "punter": "Pat O'Donnell", 
+            "blocker": "Miles Killebrew"
+        }
+    """
+    expressions = {
+        'punter': pc.PLAYER,
+        'blocker': pc.PLAYER
+    }
+
+    pattern = r"%(punter)s punts blocked by %(blocker)s" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
 def parse_penalty(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PENALTY,
@@ -528,3 +610,4 @@ def parse_kneel(play_description: str) -> re.Match or None:
     pattern = r"%(player)s kneels" % wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
+
