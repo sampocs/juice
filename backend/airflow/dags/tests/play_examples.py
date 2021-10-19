@@ -24,7 +24,8 @@ YARDAGE_EXAMPLES = [
     'CHI-45',
     'SF-5',
     'SF-14',
-    'SF-49'
+    'SF-49',
+    '50'
 ]
 
 # Ex: (tackle by Khalil Mack)

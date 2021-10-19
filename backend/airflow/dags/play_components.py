@@ -27,7 +27,7 @@ DISTANCES = [
 ]
 
 # Ex: CHI-10
-YARDAGE = r"[A-Z]{2,3}-[\d]{1,2}"
+YARDAGE = r"([A-Z]{2,3}-[\d]{1,2})|50"
 
 FIELD_GOAL_STATUSES = [
     r"good",
