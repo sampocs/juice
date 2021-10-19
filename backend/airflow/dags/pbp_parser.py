@@ -743,3 +743,49 @@ def parse_fumble(play_description: str) -> re.Match or None:
     pattern = r"%(fumbler)s fumbles%(forcer)s, recovered by %(recoverer)s at %(yardage)s%(return_distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
+
+
+def parse_interception(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a INTERCEPTION,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    INTERCEPTION should be of the form:
+        {Player Name} pass [(defended by {Player Name})] [intended for {Player Name}] 
+        is intercepted by {Player Name} at {yardage} and returned for {distance} [(tackle by {Player Name})]
+
+    Example: 
+        play_description = "Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams" + \
+                            " is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards"
+        returns: {
+            "quarterback": "Aaron Rodgers",
+            "direction": "short right",
+            "defender": "Jaylon Johnson",
+            "receiver": "Davante Adams",
+            "intercepter": "Eddie Jackson",
+            "yardage": "CHI-10",
+            "return_distance": "45 yards",
+            "tackler": None
+        }
+    """
+    expressions = {
+        'quarterback': pc.PLAYER,
+        'direction': r"|".join(pc.PASS_DIRECTIONS),
+        'defender': pc.PLAYER,
+        'receiver': pc.PLAYER,
+        'intercepter': pc.PLAYER,
+        'yardage': pc.YARDAGE,
+        'return_distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
+    }
+    expressions = wrap_expressions(expressions)
+    expressions['direction'] = make_optional(expressions['direction'])
+    expressions = replace_defender_with_defended_event(expressions)
+    expressions = replace_receiver_with_intended_event(expressions)
+    expressions = replace_return_distance_with_return_event(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
+
+    pattern = r"%(quarterback)s pass%(direction)s%(defender)s%(receiver)s is intercepted by %(intercepter)s at %(yardage)s%(return_distance)s%(tackler)s" % expressions
+
+    return re.search(pattern, play_description)

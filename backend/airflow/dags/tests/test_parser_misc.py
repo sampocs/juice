@@ -121,13 +121,127 @@ class TestParseBigDefensivePlay:
 
 
     def test_interception_all_examples(self):
-        pass
+        """
+        Test that the INTERCEPTION play parser matches interceptions
+        """
+        play_examples.check_across_all_examples('INTERCEPTION', pbp_parser.parse_interception)
+
 
     def test_interception(self):
-        pass
+        """
+        Test match dict from interception
+        """
+        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards (tackle by Davante Adams)'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': 'short right',
+            'defender': 'Jaylon Johnson',
+            'receiver': 'Davante Adams',
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': '45 yards',
+            'tackler': 'Davante Adams'
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
 
-    def test_interception_with_tackle(self):
-        pass
+
+    def test_interception_no_tackle(self):
+        """
+        Test match dict from interception with no tackle
+        """
+        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': 'short right',
+            'defender': 'Jaylon Johnson',
+            'receiver': 'Davante Adams',
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': '45 yards',
+            'tackler': None
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_interception_no_return(self):
+        """
+        Test match dict from interception with no return
+        """
+        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': 'short right',
+            'defender': 'Jaylon Johnson',
+            'receiver': 'Davante Adams',
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
+
+    def test_interception_no_receiver(self):
+        """
+         Test match dict from interception with no reciever
+        """
+        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) is intercepted by Eddie Jackson at CHI-10'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': 'short right',
+            'defender': 'Jaylon Johnson',
+            'receiver': None,
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_interception_no_defender(self):
+        """
+        Test match dict from interception with no defender
+        """
+        description = 'Aaron Rodgers pass short right intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': 'short right',
+            'defender': None,
+            'receiver': 'Davante Adams',
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_interception_no_direction(self):
+        """
+        Test match dict from interception with no direction
+        """
+        """
+        Test match dict from interception with no defender
+        """
+        description = 'Aaron Rodgers pass is intercepted by Eddie Jackson at CHI-10'
+        expected = {
+            'quarterback': 'Aaron Rodgers',
+            'direction': None,
+            'defender': None,
+            'receiver': None,
+            'intercepter': 'Eddie Jackson',
+            'yardage': 'CHI-10',
+            'return_distance': None,
+            'tackler': None
+        }
+        match = pbp_parser.parse_interception(description)
+        assert match and (match.groupdict() == expected)
+
 
     def test_fumble_all_examples(self):
         """

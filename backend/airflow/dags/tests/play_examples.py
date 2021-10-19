@@ -37,18 +37,24 @@ TACKLER_EXAMPLES = [
 # Ex: (defended by Eddie Jackson)
 DEFENDER_EXAMPLES = [
     '', # no defender
-    *[f'(defended by {player}' for player in PLAYER_EXAMPLES]
+    *[f' (defended by {player})' for player in PLAYER_EXAMPLES]
+]
+
+# Ex: intended for Davante Adams
+RECEIVER_EXAMPLES = [
+    '', # No intended receiver
+    *[f' intended for {player}' for player in PLAYER_EXAMPLES]
 ]
 
 # Ex: (forced by Khalil Mack)
 FORCE_EXAMPLES = [
-    '',
+    '', # No forcer
     *[f' (forced by {player})' for player in PLAYER_EXAMPLES]
 ]
 
 # Ex: and returned for 35 yards (tackle by Davante Adams)
 RETURN_DISTANCE_EXAMPLES = [
-    '',
+    '', # No return
     *[f'and returned for {distance}{tackler}' 
         for distance in DISTANCE_EXAMPLES 
         for tackler in TACKLER_EXAMPLES]
@@ -100,9 +106,10 @@ PASS_COMPLETE_EXAMPLES = [
 
 # Ex: Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)
 PASS_INCOMPLETE_EXAMPLES = [
-    f'{player} pass incomplete {direction} intended for {player}{defender}'
+    f'{player} pass incomplete{direction}{receiver}{defender}'
     for player in PLAYER_EXAMPLES
     for direction in pc.PASS_DIRECTIONS
+    for receiver in RECEIVER_EXAMPLES
     for defender in DEFENDER_EXAMPLES    
 ]
 
@@ -132,6 +139,17 @@ FUMBLE_EXAMPLES = [
     for recoverer in PLAYER_EXAMPLES
     for yardage in YARDAGE_EXAMPLES
     for return_distance in RETURN_DISTANCE_EXAMPLES
+]
+
+# Ex: Aaron Rodgers pass (defended by Jaylon Johnson) intended for Davante Adams
+# is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards
+INTERCEPTION_EXAMPLES = [
+    f'Aaron Rodgers pass{defender}{receiver} is intercepted by Eddie Jackson at {yardage}{return_distance}{tackler}'
+    for defender in DEFENDER_EXAMPLES
+    for receiver in RECEIVER_EXAMPLES
+    for yardage in YARDAGE_EXAMPLES
+    for return_distance in RETURN_DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
 ]
 
 # Ex: Robbie Gould kicks off 65 yards, touchback
@@ -256,6 +274,7 @@ ALL_PLAY_EXAMPLES = {
     'SACK_FULL': SACK_FULL_EXAMPLES,
     'SACK_HALF': SACK_HALF_EXAMPLES,
     'FUMBLE': FUMBLE_EXAMPLES,
+    'INTERCEPTION': INTERCEPTION_EXAMPLES,
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
     'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
     'FIELD_GOAL': FIELD_GOAL_EXAMPLES,
