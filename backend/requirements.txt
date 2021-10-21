@@ -2,3 +2,8 @@ psycopg2-binary
 fastapi 
 uvicorn[standard] 
 sqlalchemy 
+pandas
+pytz
+lxml
+requests
+pytest

@@ -32,13 +32,14 @@ def add_teams(games: List[schemas.Game], db: Session = Depends(get_db)):
     return games
 
 @app.get('/games/past/{year}/')
-def get_past_games(year: str):
+def get_past_games(year: str, db: Session = Depends(get_db)):
     pass
 
 @app.get('/games/upcoming/{year}/')
-def get_upcoming_games(year: str):
+def get_upcoming_games(year: str, db: Session = Depends(get_db)):
     pass
 
-@app.get('/pbp/{game_id}')
-def get_pbp(game_id: str):
-    pass
+@app.get('/pbp/{year}')
+def get_games_needing_pbp(year: str, db: Session = Depends(get_db)):
+    game_ids = crud.get_games_needing_pbp(db=db, year=year)
+    return game_ids

@@ -10,7 +10,7 @@ class Team(BaseModel):
     mascot: str
     start_year: int
     active: bool
-    pfr_name: str
+    pfr_id: str
 
     class Config:
         orm_mode = True
@@ -25,7 +25,7 @@ class Game(BaseModel):
     away_team_id: str
     home_score: Optional[int]
     away_score: Optional[int]
-    has_pbp: Optional[bool] = False
+    has_pbp: bool = False
 
     class Config:
         orm_mode = True
