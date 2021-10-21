@@ -1,6 +1,5 @@
-import pbp_parser 
 import play_examples
-
+from parser import pass_
 
 class TestParsePassComplete:
 
@@ -8,7 +7,7 @@ class TestParsePassComplete:
         """
         Test that the PASS_COMPLETE play parser matches only completed pass plays
         """
-        play_examples.check_across_all_examples('PASS_COMPLETE', pbp_parser.parse_pass_complete_play)
+        play_examples.check_across_all_examples('PASS_COMPLETE', pass_.parse_pass_complete_play)
 
 
     def test_pass_complete(self):
@@ -23,7 +22,7 @@ class TestParsePassComplete:
             'distance': '45 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_pass_complete_play(description)
+        match = pass_.parse_pass_complete_play(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -39,7 +38,7 @@ class TestParsePassComplete:
             'distance': '45 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_pass_complete_play(description)
+        match = pass_.parse_pass_complete_play(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -55,7 +54,7 @@ class TestParsePassComplete:
             'distance': '45 yards',
             'tackler': 'Jalen Ramsey'
         }
-        match = pbp_parser.parse_pass_complete_play(description)
+        match = pass_.parse_pass_complete_play(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -71,7 +70,7 @@ class TestParsePassComplete:
             'distance': '45 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_pass_complete_play(description)
+        match = pass_.parse_pass_complete_play(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -81,7 +80,7 @@ class TestParsePassIncomplete:
         """
         Test that the PASS_INCOMPLETE play parser matches only incomplete pass plays
         """
-        play_examples.check_across_all_examples('PASS_INCOMPLETE', pbp_parser.parse_pass_incomplete_play)
+        play_examples.check_across_all_examples('PASS_INCOMPLETE', pass_.parse_pass_incomplete_play)
 
 
     def test_pass_incomplete(self):
@@ -95,7 +94,7 @@ class TestParsePassIncomplete:
             'receiver': 'Davante Adams',
             'defender': None
         }
-        match = pbp_parser.parse_pass_incomplete_play(description)
+        match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -110,7 +109,7 @@ class TestParsePassIncomplete:
             'receiver': 'Davante Adams',
             'defender': None
         }
-        match = pbp_parser.parse_pass_incomplete_play(description)
+        match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -134,8 +133,8 @@ class TestParsePassIncomplete:
             'defender': None
         }
 
-        match1 = pbp_parser.parse_pass_incomplete_play(description1)
-        match2 = pbp_parser.parse_pass_incomplete_play(description2)
+        match1 = pass_.parse_pass_incomplete_play(description1)
+        match2 = pass_.parse_pass_incomplete_play(description2)
 
         assert match1 and (match1.groupdict() == expected1)  
         assert match2 and (match2.groupdict() == expected2)  
@@ -152,5 +151,5 @@ class TestParsePassIncomplete:
             'receiver': 'Davante Adams',
             'defender': 'Jaylon Johnson'
         }
-        match = pbp_parser.parse_pass_incomplete_play(description)
+        match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)

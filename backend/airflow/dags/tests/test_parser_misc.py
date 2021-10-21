@@ -1,6 +1,5 @@
-import pbp_parser 
 import play_examples
-
+from parser import misc
 
 class TestParsePenalty:
 
@@ -8,7 +7,7 @@ class TestParsePenalty:
         """
         Test that the PENALTY play parser matches penalties
         """
-        play_examples.check_across_all_examples('PENALTY', pbp_parser.parse_penalty)
+        play_examples.check_across_all_examples('PENALTY', misc.parse_penalty)
 
 
     def test_penalty(self):
@@ -23,7 +22,7 @@ class TestParsePenalty:
             'response': None,
             'no_play': None
         }
-        match = pbp_parser.parse_penalty(description)
+        match = misc.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -39,7 +38,7 @@ class TestParsePenalty:
             'response': 'accepted',
             'no_play': None
         }
-        match = pbp_parser.parse_penalty(description)
+        match = misc.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -55,7 +54,7 @@ class TestParsePenalty:
             'response': None,
             'no_play': 'no play'
         }
-        match = pbp_parser.parse_penalty(description)
+        match = misc.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -71,251 +70,10 @@ class TestParsePenalty:
             'response': None,
             'no_play': None
         }
-        match = pbp_parser.parse_penalty(description)
+        match = misc.parse_penalty(description)
         assert match and (match.groupdict() == expected)
 
 
-class TestParseBigDefensivePlay:
-    def test_sack_full_all_examples(self):
-        """
-        Test that the SACK_FULL play parser matches penalties
-        """
-        play_examples.check_across_all_examples('SACK_FULL', pbp_parser.parse_sack_full)
-
-
-    def test_sack_half_all_examples(self):
-        """
-        Test that the SACK_HALF play parser matches penalties
-        """
-        play_examples.check_across_all_examples('SACK_HALF', pbp_parser.parse_sack_half)
-
-
-    def test_sack_full(self):
-        """
-        Test match dict from sack full
-        """
-        description = 'Aaron Rodgers sacked by Khalil Mack for -10 yards'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'sacker': 'Khalil Mack',
-            'distance': '-10 yards'
-        }
-        match = pbp_parser.parse_sack_full(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_sack_half(self):
-        """
-        Test match dict from sack half
-        """
-        description = 'Aaron Rodgers sacked by and Khalil Mack for -10 yards and Akiem Hicks for -10 yards'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'sacker1': 'Khalil Mack',
-            'sacker2': 'Akiem Hicks',
-            'distance1': '-10 yards',
-            'distance2': '-10 yards'
-        }
-        match = pbp_parser.parse_sack_half(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_interception_all_examples(self):
-        """
-        Test that the INTERCEPTION play parser matches interceptions
-        """
-        play_examples.check_across_all_examples('INTERCEPTION', pbp_parser.parse_interception)
-
-
-    def test_interception(self):
-        """
-        Test match dict from interception
-        """
-        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards (tackle by Davante Adams)'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
-            'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': '45 yards',
-            'tackler': 'Davante Adams'
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_interception_no_tackle(self):
-        """
-        Test match dict from interception with no tackle
-        """
-        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
-            'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': '45 yards',
-            'tackler': None
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_interception_no_return(self):
-        """
-        Test match dict from interception with no return
-        """
-        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
-            'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-    def test_interception_no_receiver(self):
-        """
-         Test match dict from interception with no reciever
-        """
-        description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) is intercepted by Eddie Jackson at CHI-10'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
-            'receiver': None,
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_interception_no_defender(self):
-        """
-        Test match dict from interception with no defender
-        """
-        description = 'Aaron Rodgers pass short right intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': None,
-            'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_interception_no_direction(self):
-        """
-        Test match dict from interception with no direction
-        """
-        """
-        Test match dict from interception with no defender
-        """
-        description = 'Aaron Rodgers pass is intercepted by Eddie Jackson at CHI-10'
-        expected = {
-            'quarterback': 'Aaron Rodgers',
-            'direction': None,
-            'defender': None,
-            'receiver': None,
-            'intercepter': 'Eddie Jackson',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_interception(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_fumble_all_examples(self):
-        """
-        Test that the FUMBLE play parser matches penalties
-        """
-        play_examples.check_across_all_examples('FUMBLE', pbp_parser.parse_fumble)
-
-
-    def test_fumble(self):
-        """
-        Test match dict from a fumble
-        """
-        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards (tackle by Davante Adams)'
-        expected = {
-            'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
-            'yardage': 'CHI-10',
-            'return_distance': '-10 yards',
-            'tackler': 'Davante Adams'
-        }
-        match = pbp_parser.parse_fumble(description)
-        assert match and (match.groupdict() == expected)
-
-    
-    def test_fumble_no_return_tackle(self):
-        """
-        Test match dict from a fumble with a return but no tackle
-        """
-        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards'
-        expected = {
-            'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
-            'yardage': 'CHI-10',
-            'return_distance': '-10 yards',
-            'tackler': None
-        }
-        match = pbp_parser.parse_fumble(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_fumble_no_return(self):
-        """
-        Test match dict from a fumble with a return but no tackle
-        """
-        description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10'
-        expected = {
-            'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_fumble(description)
-        assert match and (match.groupdict() == expected)
-
-
-    def test_fumble_no_force(self):
-        """
-        Test match dict from a fumble with a return but no tackle
-        """
-        description = 'Aaron Rodgers fumbles, recovered by Akiem Hicks at CHI-10'
-        expected = {
-            'fumbler': 'Aaron Rodgers',
-            'forcer': None,
-            'recoverer': 'Akiem Hicks',
-            'yardage': 'CHI-10',
-            'return_distance': None,
-            'tackler': None
-        }
-        match = pbp_parser.parse_fumble(description)
-        assert match and (match.groupdict() == expected)
 
 
 class TestParseMisc:
@@ -324,7 +82,7 @@ class TestParseMisc:
         """
         Test that the TIMEOUT matches 
         """
-        play_examples.check_across_all_examples('TIMEOUT', pbp_parser.parse_timeout)
+        play_examples.check_across_all_examples('TIMEOUT', misc.parse_timeout)
 
 
     def test_timeout(self):
@@ -336,7 +94,7 @@ class TestParseMisc:
             'timeout_number': '#1',
             'team': 'Chicago Bears',
         }
-        match = pbp_parser.parse_timeout(description)
+        match = misc.parse_timeout(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -344,7 +102,7 @@ class TestParseMisc:
         """
         Test that the SPIKE matches 
         """
-        play_examples.check_across_all_examples('SPIKE', pbp_parser.parse_spike)
+        play_examples.check_across_all_examples('SPIKE', misc.parse_spike)
     
 
     def test_spike(self):
@@ -355,7 +113,7 @@ class TestParseMisc:
         expected = {
             'player': 'Justin Fields',
         }
-        match = pbp_parser.parse_spike(description)
+        match = misc.parse_spike(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -363,7 +121,7 @@ class TestParseMisc:
         """
         Test that KNEELs match
         """
-        play_examples.check_across_all_examples('KNEEL', pbp_parser.parse_kneel)
+        play_examples.check_across_all_examples('KNEEL', misc.parse_kneel)
 
 
     def test_kneel(self):
@@ -374,5 +132,5 @@ class TestParseMisc:
         expected = {
             'player': 'Justin Fields',
         }
-        match = pbp_parser.parse_kneel(description)
+        match = misc.parse_kneel(description)
         assert match and (match.groupdict() == expected)

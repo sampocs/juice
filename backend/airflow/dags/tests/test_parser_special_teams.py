@@ -1,6 +1,5 @@
-import pbp_parser 
 import play_examples
-
+from parser import special_teams
 
 class TestParseKickoff:
 
@@ -8,28 +7,28 @@ class TestParseKickoff:
         """
         Test that the KICKOFF_TOUCHBACK play parser matches kickoff touchbacks
         """
-        play_examples.check_across_all_examples('KICKOFF_TOUCHBACK', pbp_parser.parse_kickoff_touchback)
+        play_examples.check_across_all_examples('KICKOFF_TOUCHBACK', special_teams.parse_kickoff_touchback)
 
 
     def test_kickoff_returned_parsing_all_examples(self):
         """
         Test that the KICKOFF_RETURNED play parser matches only kickoffs returned
         """
-        play_examples.check_across_all_examples('KICKOFF_RETURNED', pbp_parser.parse_kickoff_returned)
+        play_examples.check_across_all_examples('KICKOFF_RETURNED', special_teams.parse_kickoff_returned)
 
 
     def test_kickoff_out_of_bounds_parsing_all_examples(self):
         """
         Test that the KICKOFF_OUT_OF_BOUNDS play parser matches only out of bounds kicks
         """
-        play_examples.check_across_all_examples('KICKOFF_OUT_OF_BOUNDS', pbp_parser.parse_kickoff_out_of_bounds)
+        play_examples.check_across_all_examples('KICKOFF_OUT_OF_BOUNDS', special_teams.parse_kickoff_out_of_bounds)
 
 
     def test_onside_kick_parsing_all_examples(self):
         """
         Test that the ONSIDE_KICK play parser matches only onside kicks 
         """
-        play_examples.check_across_all_examples('ONSIDE_KICK', pbp_parser.parse_onside_kick)
+        play_examples.check_across_all_examples('ONSIDE_KICK', special_teams.parse_onside_kick)
 
 
     def test_kickoff_touchback(self):
@@ -41,7 +40,7 @@ class TestParseKickoff:
             'kicker': 'Robbie Gould',
             'distance': '65 yards',
         }
-        match = pbp_parser.parse_kickoff_touchback(description)
+        match = special_teams.parse_kickoff_touchback(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -57,7 +56,7 @@ class TestParseKickoff:
             'return_distance': '54 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_kickoff_returned(description)
+        match = special_teams.parse_kickoff_returned(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -73,7 +72,7 @@ class TestParseKickoff:
             'return_distance': '54 yards',
             'tackler': 'Robbie Gould'
         }
-        match = pbp_parser.parse_kickoff_returned(description)
+        match = special_teams.parse_kickoff_returned(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -86,7 +85,7 @@ class TestParseKickoff:
             'kicker': 'Robbie Gould',
             'kick_distance': '65 yards'
         }
-        match = pbp_parser.parse_kickoff_out_of_bounds(description)
+        match = special_teams.parse_kickoff_out_of_bounds(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -99,7 +98,7 @@ class TestParseKickoff:
             'kicker': 'Robbie Gould',
             'kick_distance': '9 yards'
         }
-        match = pbp_parser.parse_onside_kick(description)
+        match = special_teams.parse_onside_kick(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -109,7 +108,7 @@ class TestFieldGoal:
         """
         Test that the FIELD_GOAL play parser matches field goals
         """
-        play_examples.check_across_all_examples('FIELD_GOAL', pbp_parser.parse_field_goal)
+        play_examples.check_across_all_examples('FIELD_GOAL', special_teams.parse_field_goal)
 
 
     def test_field_goal_good(self):
@@ -122,7 +121,7 @@ class TestFieldGoal:
             'distance': '43 yard',
             'status': 'good'
         }
-        match = pbp_parser.parse_field_goal(description)
+        match = special_teams.parse_field_goal(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -136,7 +135,7 @@ class TestFieldGoal:
             'distance': '43 yard',
             'status': 'no good'
         }
-        match = pbp_parser.parse_field_goal(description)
+        match = special_teams.parse_field_goal(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -146,7 +145,7 @@ class TestExtraPoint:
         """
         Test that the EXTRA_POINT play parser matches field goals
         """
-        play_examples.check_across_all_examples('EXTRA_POINT', pbp_parser.parse_extra_point)
+        play_examples.check_across_all_examples('EXTRA_POINT', special_teams.parse_extra_point)
 
 
     def test_extra_point_good(self):
@@ -158,7 +157,7 @@ class TestExtraPoint:
             'kicker': 'Robbie Gould',
             'status': 'good'
         }
-        match = pbp_parser.parse_extra_point(description)
+        match = special_teams.parse_extra_point(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -171,7 +170,7 @@ class TestExtraPoint:
             'kicker': 'Robbie Gould',
             'status': 'no good'
         }
-        match = pbp_parser.parse_extra_point(description)
+        match = special_teams.parse_extra_point(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -181,49 +180,49 @@ class TestPunt:
         """
         Test that the PUNT_OUT_OF_BOUNDS play parser matches out of bounds punts
         """
-        play_examples.check_across_all_examples('PUNT_OUT_OF_BOUNDS', pbp_parser.parse_punt_out)
+        play_examples.check_across_all_examples('PUNT_OUT_OF_BOUNDS', special_teams.parse_punt_out)
 
 
     def test_punt_downed_all_examples(self):
         """
         Test that the PUNT_DOWNED play parser matches downed punts
         """
-        play_examples.check_across_all_examples('PUNT_DOWNED', pbp_parser.parse_punt_downed)
+        play_examples.check_across_all_examples('PUNT_DOWNED', special_teams.parse_punt_downed)
 
 
     def test_punt_fair_catch_all_examples(self):
         """
         Test that the PUNT_FAIR_CATCH play parser matches fair catches
         """
-        play_examples.check_across_all_examples('PUNT_FAIR_CATCH', pbp_parser.parse_punt_fair_catch)
+        play_examples.check_across_all_examples('PUNT_FAIR_CATCH', special_teams.parse_punt_fair_catch)
 
 
     def test_punt_returned_all_examples(self):
         """
         Test that the PUNT_RETURNED play parser matches returned punts
         """
-        play_examples.check_across_all_examples('PUNT_RETURNED', pbp_parser.parse_punt_returned)
+        play_examples.check_across_all_examples('PUNT_RETURNED', special_teams.parse_punt_returned)
 
 
     def test_punt_recovered_all_examples(self):
         """
         Test that the PUNT_RECOVERED play parser matches recovered punts
         """
-        play_examples.check_across_all_examples('PUNT_RECOVERED', pbp_parser.parse_punt_recovered)
+        play_examples.check_across_all_examples('PUNT_RECOVERED', special_teams.parse_punt_recovered)
 
     
     def test_punt_touchback_all_examples(self):
         """
         Test that the PUNT_TOUCHBACK play parser matches touchback punts
         """
-        play_examples.check_across_all_examples('PUNT_TOUCHBACK', pbp_parser.parse_punt_touchback)
+        play_examples.check_across_all_examples('PUNT_TOUCHBACK', special_teams.parse_punt_touchback)
 
     
     def test_punt_blocked_all_examples(self):
         """
         Test that the PUNT_BLOCKED play parser matches blocked punts
         """
-        play_examples.check_across_all_examples('PUNT_BLOCKED', pbp_parser.parse_punt_blocked)
+        play_examples.check_across_all_examples('PUNT_BLOCKED', special_teams.parse_punt_blocked)
 
 
     def test_punt_out_of_bounds(self):
@@ -235,7 +234,7 @@ class TestPunt:
             'punter': "Pat O'Donnell",
             'distance': '45 yards'
         }
-        match = pbp_parser.parse_punt_out(description)
+        match = special_teams.parse_punt_out(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -249,7 +248,7 @@ class TestPunt:
             'distance': '45 yards',
             'downer': 'Cordarrelle Patterson'
         }
-        match = pbp_parser.parse_punt_downed(description)
+        match = special_teams.parse_punt_downed(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -264,7 +263,7 @@ class TestPunt:
             'returner': 'Cordarrelle Patterson',
             'yardage': 'DET-10'
         }
-        match = pbp_parser.parse_punt_fair_catch(description)
+        match = special_teams.parse_punt_fair_catch(description)
         assert match and (match.groupdict() == expected)
 
     
@@ -280,7 +279,7 @@ class TestPunt:
             'return_distance': '27 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_punt_returned(description)
+        match = special_teams.parse_punt_returned(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -296,7 +295,7 @@ class TestPunt:
             'return_distance': '27 yards',
             'tackler': "Pat O'Donnell"
         }
-        match = pbp_parser.parse_punt_returned(description)
+        match = special_teams.parse_punt_returned(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -311,7 +310,7 @@ class TestPunt:
             'recoverer': 'Cordarrelle Patterson',
             'yardage': 'CHI-10',
         }
-        match = pbp_parser.parse_punt_recovered(description)
+        match = special_teams.parse_punt_recovered(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -324,7 +323,7 @@ class TestPunt:
             'punter': "Pat O'Donnell", 
             'punt_distance': '45 yards'
         }
-        match = pbp_parser.parse_punt_touchback(description)
+        match = special_teams.parse_punt_touchback(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -337,5 +336,5 @@ class TestPunt:
             'punter': "Pat O'Donnell", 
             'blocker': 'Miles Killebrew'
         }
-        match = pbp_parser.parse_punt_blocked(description)
+        match = special_teams.parse_punt_blocked(description)
         assert match and (match.groupdict() == expected)

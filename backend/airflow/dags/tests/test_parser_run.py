@@ -1,6 +1,5 @@
-import pbp_parser 
 import play_examples
-
+from parser import run
 
 class TestParseRun:
 
@@ -8,14 +7,14 @@ class TestParseRun:
         """
         Test that the RUN play parser matches only run plays
         """
-        play_examples.check_across_all_examples('RUN', pbp_parser.parse_run_play)
+        play_examples.check_across_all_examples('RUN', run.parse_run_play)
 
 
     def test_run_no_direction_parsing_all_examples(self):
         """
         Test that the RUN_NO_DIRECTION play parser matches only run plays
         """
-        play_examples.check_across_all_examples('RUN_NO_DIRECTION', pbp_parser.parse_run_no_direction_play)
+        play_examples.check_across_all_examples('RUN_NO_DIRECTION', run.parse_run_no_direction_play)
 
 
     def test_run_play(self):
@@ -29,7 +28,7 @@ class TestParseRun:
             'distance': '10 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_run_play(description)
+        match = run.parse_run_play(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -44,7 +43,7 @@ class TestParseRun:
             'distance': 'no gain',
             'tackler': None
         }
-        match = pbp_parser.parse_run_play(description)
+        match = run.parse_run_play(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -66,8 +65,8 @@ class TestParseRun:
             'distance': '1 yard',
             'tackler': 'Aaron Donald and Jalen Ramsey'
         }
-        match1 = pbp_parser.parse_run_play(description1)
-        match2 = pbp_parser.parse_run_play(description2)
+        match1 = run.parse_run_play(description1)
+        match2 = run.parse_run_play(description2)
 
         assert match1 and (match1.groupdict() == expected1)
         assert match2 and (match2.groupdict() == expected2)
@@ -84,7 +83,7 @@ class TestParseRun:
             'distance': '30 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_run_play(description)
+        match = run.parse_run_play(description)
         assert match and (match.groupdict() == expected)
 
 
@@ -98,6 +97,6 @@ class TestParseRun:
             'distance': '30 yards',
             'tackler': None
         }
-        match = pbp_parser.parse_run_no_direction_play(description)
+        match = run.parse_run_no_direction_play(description)
         assert match and (match.groupdict() == expected)
 

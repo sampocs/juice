@@ -1,5 +1,5 @@
 from typing import Callable
-import play_components as pc
+import parser.play_components as pc
 
 PLAYER_EXAMPLES = [
     'First Last', 

@@ -1,8 +1,7 @@
 import re
-import play_components as pc
-from play_examples import *
-import pbp_parser 
-
+import parser.play_components as pc
+import play_examples
+from parser import core
 
 class TestParseCore:
     
@@ -18,10 +17,10 @@ class TestParseCore:
             'year': r"(?P<year>[\d]{4})",
             'month': r"(?P<month>[\d]{2})"
         }
-        assert pbp_parser.wrap_expressions(expressions) == wrapped_expressions
+        assert core.wrap_expressions(expressions) == wrapped_expressions
 
         test_string = '2019 01'
-        test_regex = r"%(year)s %(month)s" % pbp_parser.wrap_expressions(expressions)
+        test_regex = r"%(year)s %(month)s" % core.wrap_expressions(expressions)
         expected_matching = {
             'year': '2019',
             'month': '01'
@@ -33,8 +32,8 @@ class TestParseCore:
         """
         Test that the distance regex's are working
         """
-        all_distance_pattern = r"|".join(DISTANCE_EXAMPLES)
-        for distance in DISTANCE_EXAMPLES:
+        all_distance_pattern = r"|".join(play_examples.DISTANCE_EXAMPLES)
+        for distance in play_examples.DISTANCE_EXAMPLES:
             assert re.search(all_distance_pattern, distance), \
                 f'Example distance ({distance}) did not match distance regex'
 
@@ -43,7 +42,7 @@ class TestParseCore:
         """
         Test that the player regex is working properly
         """
-        for player in PLAYER_EXAMPLES:
+        for player in play_examples.PLAYER_EXAMPLES:
             assert re.search(pc.PLAYER, player), \
                 f'Example player ({player}) did not match Player regex'
 
@@ -64,7 +63,7 @@ class TestParseCore:
         """
         Test that the yardage regex is working properly
         """
-        for yardage in YARDAGE_EXAMPLES:
+        for yardage in play_examples.YARDAGE_EXAMPLES:
             assert re.search(pc.YARDAGE, yardage), \
                 f'Example yardage ({yardage}) did not match Yardage regex'
 
@@ -73,6 +72,6 @@ class TestParseCore:
         """
         Test that the penalty regex is working properly
         """
-        for penalty in PENALTY_EXAMPLES:
+        for penalty in play_examples.PENALTY_EXAMPLES:
             assert re.search(pc.PENALTY, penalty), \
                 f'Example penalty ({penalty}) did not match Penalty regex'
