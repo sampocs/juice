@@ -159,6 +159,38 @@ def parse_run_play(play_description: str) -> re.Match or None:
     return re.search(pattern, play_description)
 
 
+def parse_run_no_direction_play(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a RUN_NO_DIRECTION play,
+    returns the regex match re.Matchionary for each piece of information in the description
+    Otherwise, returns None
+
+    RUN plays should be of the form:
+        {Player Name} for {distance} [(tackle by {tackler})]
+
+    Example: 
+        play_description = "David Montgomery for 15 yards
+        returns: {
+            "runner": "David Montgomery", 
+            "distance": "15 yards", 
+            "tackler": None
+        }
+    """
+
+    expressions = {
+        'runner': pc.STRICT_PLAYER,
+        'distance': r"|".join(pc.DISTANCES),
+        'tackler': pc.PLAYER
+    }
+
+    # Make tackler optional
+    expressions = wrap_expressions(expressions)
+    expressions = replace_tackler_with_tackle_event(expressions)
+
+    pattern = r"^%(runner)s for %(distance)s%(tackler)s" % expressions
+    return re.search(pattern, play_description)
+
+
 def parse_pass_complete_play(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PASS_COMPLETE play,
@@ -283,6 +315,32 @@ def parse_kickoff_returned(play_description: str) -> re.Match or None:
     expressions = replace_tackler_with_tackle_event(expressions)
 
     pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s%(tackler)s" % expressions
+
+    return re.search(pattern, play_description)
+
+
+def parse_kickoff_out_of_bounds(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a KICKOFF OUT OF BOUNDS,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    KICKOFF OUT OF BOUNDS should be of the form:
+        {Player Name} kicks off {distance}, out of bounds
+
+    Example: 
+        play_description = "Robbie Gould kicks off 73 yards, out of bounds"
+        returns: {
+            "kicker": "Robbie Gould", 
+            "kick_distance": "73 yards"
+        }
+    """
+    expressions = {
+        'kicker': pc.PLAYER,
+        'kick_distance': r"|".join(pc.DISTANCES)
+    }
+
+    pattern = r"%(kicker)s kicks off %(kick_distance)s, out of bounds" % wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -537,6 +595,32 @@ def parse_punt_blocked(play_description: str) -> re.Match or None:
     }
 
     pattern = r"%(punter)s punts blocked by %(blocker)s" % wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
+def parse_onside_kick(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a ONSIDE_KICK,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    ONSIDE_KICK should be of the form:
+        {Player Name} kicks onside {distance}, returned by {Player Name} for {distance}
+
+    Example: 
+        play_description = "Robbie Gould kicks onside 9 yards, returned by Cordarrelle Patterson for 5 yards"
+        returns: {
+            "kicker": "Robbie Gould",
+            "kick_distance": "9 yards"
+        }
+    """
+    expressions = {
+        'kicker': pc.PLAYER,
+        'kick_distance': r"|".join(pc.DISTANCES)
+    }
+
+    pattern = r"%(kicker)s kicks onside %(kick_distance)s" % wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 

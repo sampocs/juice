@@ -47,6 +47,18 @@ class TestParseCore:
             assert re.search(pc.PLAYER, player), \
                 f'Example player ({player}) did not match Player regex'
 
+    
+    def test_strict_player_regex(self):
+        """
+        Test that the player regex is working properly
+        """
+        assert re.search(pc.STRICT_PLAYER, 'First Last'), \
+                f'Example player (First Last) did not match Player regex'
+
+        assert re.search(r"^%s for" % pc.STRICT_PLAYER, 'First Middle Last for') is None, \
+                f'Example player (First Middle Last) matched ' + \
+                    'strict player regex when it should not have'
+
 
     def test_yardage_regex(self):
         """

@@ -95,6 +95,13 @@ RUN_EXAMPLES = [
     for tackler in TACKLER_EXAMPLES
 ]
 
+# Ex: David Montgomery for 10 yards
+RUN_NO_DIRECTION = [
+    f'First Last for {distance}{tackler}'
+    for distance in DISTANCE_EXAMPLES
+    for tackler in TACKLER_EXAMPLES
+]
+
 # Ex: Justin Fields pass complete deep right to Allen Robinson for 45 yards, touchdown
 PASS_COMPLETE_EXAMPLES = [
      f'{player} pass complete{direction} to {player} for {distance}{tackler}{touchdown}'
@@ -168,6 +175,23 @@ KICKOFF_RETURNED_EXAMPLES = [
     for returner in PLAYER_EXAMPLES
     for return_distance in DISTANCE_EXAMPLES
     for tackler in TACKLER_EXAMPLES
+]
+
+# Ex: Robbie Gould kicks off 65 yards, out of bounds
+KICKOFF_OUT_OF_BOUNDS_EXAMPLES = [
+    f'{kicker} kicks off {kick_distance}, out of bounds'
+    for kicker in PLAYER_EXAMPLES
+    for kick_distance in DISTANCE_EXAMPLES
+]
+
+# Ex: Robbie Gould kicks onside 10 yards, out of bounds
+ONSIDE_KICK = [
+    f'{kicker} kicks onside {kick_distance}{advancement}'
+    for kicker in PLAYER_EXAMPLES
+    for kick_distance in DISTANCE_EXAMPLES
+    for advancement in [
+        ', out of bounds', ', returned by Cordarrelle Patterson for 10 yards'
+    ]
 ]
 
 # Ex: Robbie Gould 43 yard field goal good
@@ -270,6 +294,7 @@ KNEEL_EXAMPLES = [
 
 ALL_PLAY_EXAMPLES = {
     'RUN': RUN_EXAMPLES,
+    'RUN_NO_DIRECTION': RUN_NO_DIRECTION,
     'PASS_COMPLETE': PASS_COMPLETE_EXAMPLES,
     'PASS_INCOMPLETE': PASS_INCOMPLETE_EXAMPLES,
     'SACK_FULL': SACK_FULL_EXAMPLES,
@@ -278,6 +303,8 @@ ALL_PLAY_EXAMPLES = {
     'INTERCEPTION': INTERCEPTION_EXAMPLES,
     'KICKOFF_TOUCHBACK': KICKOFF_TOUCHBACK_EXAMPLES,
     'KICKOFF_RETURNED': KICKOFF_RETURNED_EXAMPLES,
+    'KICKOFF_OUT_OF_BOUNDS': KICKOFF_OUT_OF_BOUNDS_EXAMPLES,
+    'ONSIDE_KICK': ONSIDE_KICK,
     'FIELD_GOAL': FIELD_GOAL_EXAMPLES,
     'EXTRA_POINT': EXTRA_POINT_EXAMPLES,
     'PUNT_OUT_OF_BOUNDS': PUNT_OUT_OF_BOUNDS_EXAMPLES,

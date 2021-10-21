@@ -11,6 +11,13 @@ class TestParseRun:
         play_examples.check_across_all_examples('RUN', pbp_parser.parse_run_play)
 
 
+    def test_run_no_direction_parsing_all_examples(self):
+        """
+        Test that the RUN_NO_DIRECTION play parser matches only run plays
+        """
+        play_examples.check_across_all_examples('RUN_NO_DIRECTION', pbp_parser.parse_run_no_direction_play)
+
+
     def test_run_play(self):
         """
         Test match dict from normal run play
@@ -78,5 +85,19 @@ class TestParseRun:
             'tackler': None
         }
         match = pbp_parser.parse_run_play(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_run_no_direction_play(self):
+        """
+        Test match dict run play with no direction
+        """
+        description = "David Montgomery for 30 yards"
+        expected = {
+            'runner': 'David Montgomery',
+            'distance': '30 yards',
+            'tackler': None
+        }
+        match = pbp_parser.parse_run_no_direction_play(description)
         assert match and (match.groupdict() == expected)
 

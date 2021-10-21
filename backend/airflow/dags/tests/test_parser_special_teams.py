@@ -18,6 +18,20 @@ class TestParseKickoff:
         play_examples.check_across_all_examples('KICKOFF_RETURNED', pbp_parser.parse_kickoff_returned)
 
 
+    def test_kickoff_out_of_bounds_parsing_all_examples(self):
+        """
+        Test that the KICKOFF_OUT_OF_BOUNDS play parser matches only out of bounds kicks
+        """
+        play_examples.check_across_all_examples('KICKOFF_OUT_OF_BOUNDS', pbp_parser.parse_kickoff_out_of_bounds)
+
+
+    def test_onside_kick_parsing_all_examples(self):
+        """
+        Test that the ONSIDE_KICK play parser matches only onside kicks 
+        """
+        play_examples.check_across_all_examples('ONSIDE_KICK', pbp_parser.parse_onside_kick)
+
+
     def test_kickoff_touchback(self):
         """
         Test match dict from kickoff with touchback
@@ -60,6 +74,32 @@ class TestParseKickoff:
             'tackler': 'Robbie Gould'
         }
         match = pbp_parser.parse_kickoff_returned(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_kickoff_out_of_bounds(self):
+        """
+        Test match dict from kickoff out of bounds
+        """
+        description = 'Robbie Gould kicks off 65 yards, out of bounds'
+        expected = {
+            'kicker': 'Robbie Gould',
+            'kick_distance': '65 yards'
+        }
+        match = pbp_parser.parse_kickoff_out_of_bounds(description)
+        assert match and (match.groupdict() == expected)
+
+
+    def test_onside_kick(self):
+        """
+        Test match dict from onside kick
+        """
+        description = 'Robbie Gould kicks onside 9 yards, out of bounds'
+        expected = {
+            'kicker': 'Robbie Gould',
+            'kick_distance': '9 yards'
+        }
+        match = pbp_parser.parse_onside_kick(description)
         assert match and (match.groupdict() == expected)
 
 
