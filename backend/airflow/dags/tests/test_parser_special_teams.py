@@ -38,7 +38,7 @@ class TestParseKickoff:
         description = 'Robbie Gould kicks off 65 yards, touchback'
         expected = {
             'kicker': 'Robbie Gould',
-            'distance': '65 yards',
+            'kick_distance': '65 yards',
         }
         match = special_teams.parse_kickoff_touchback(description)
         assert match and (match.groupdict() == expected)
@@ -52,8 +52,8 @@ class TestParseKickoff:
         expected = {
             'kicker': 'Robbie Gould',
             'kick_distance': '65 yards',
-            'returner': 'Cordarrelle Patterson',
-            'return_distance': '54 yards',
+            'kick_returner': 'Cordarrelle Patterson',
+            'kick_return_distance': '54 yards',
             'tackler': None
         }
         match = special_teams.parse_kickoff_returned(description)
@@ -68,8 +68,8 @@ class TestParseKickoff:
         expected = {
             'kicker': 'Robbie Gould',
             'kick_distance': '65 yards',
-            'returner': 'Cordarrelle Patterson',
-            'return_distance': '54 yards',
+            'kick_returner': 'Cordarrelle Patterson',
+            'kick_return_distance': '54 yards',
             'tackler': 'Robbie Gould'
         }
         match = special_teams.parse_kickoff_returned(description)
@@ -118,7 +118,7 @@ class TestFieldGoal:
         description = 'Robbie Gould 43 yard field goal good'
         expected = {
             'kicker': 'Robbie Gould',
-            'distance': '43 yard',
+            'field_goal_distance': '43 yard',
             'status': 'good'
         }
         match = special_teams.parse_field_goal(description)
@@ -132,7 +132,7 @@ class TestFieldGoal:
         description = 'Robbie Gould 43 yard field goal no good'
         expected = {
             'kicker': 'Robbie Gould',
-            'distance': '43 yard',
+            'field_goal_distance': '43 yard',
             'status': 'no good'
         }
         match = special_teams.parse_field_goal(description)
@@ -232,7 +232,7 @@ class TestPunt:
         description = "Pat O'Donnell punts 45 yards out of bounds"
         expected = {
             'punter': "Pat O'Donnell",
-            'distance': '45 yards'
+            'punt_distance': '45 yards'
         }
         match = special_teams.parse_punt_out_of_bounds(description)
         assert match and (match.groupdict() == expected)
@@ -245,7 +245,7 @@ class TestPunt:
         description = "Pat O'Donnell punts 45 yards downed by Cordarrelle Patterson"
         expected = {
             'punter': "Pat O'Donnell",
-            'distance': '45 yards',
+            'punt_distance': '45 yards',
             'downer': 'Cordarrelle Patterson'
         }
         match = special_teams.parse_punt_downed(description)
@@ -260,7 +260,7 @@ class TestPunt:
         expected = {
             'punter': "Pat O'Donnell",
             'punt_distance': '45 yards',
-            'returner': 'Cordarrelle Patterson',
+            'punt_returner': 'Cordarrelle Patterson',
             'yardage': 'DET-10'
         }
         match = special_teams.parse_punt_fair_catch(description)
@@ -275,8 +275,8 @@ class TestPunt:
         expected = {
             'punter': "Pat O'Donnell", 
             'punt_distance': '45 yards',
-            'returner': 'Cordarrelle Patterson',
-            'return_distance': '27 yards',
+            'punt_returner': 'Cordarrelle Patterson',
+            'punt_return_distance': '27 yards',
             'tackler': None
         }
         match = special_teams.parse_punt_returned(description)
@@ -291,8 +291,8 @@ class TestPunt:
         expected = {
             'punter': "Pat O'Donnell", 
             'punt_distance': '45 yards',
-            'returner': 'Cordarrelle Patterson',
-            'return_distance': '27 yards',
+            'punt_returner': 'Cordarrelle Patterson',
+            'punt_return_distance': '27 yards',
             'tackler': "Pat O'Donnell"
         }
         match = special_teams.parse_punt_returned(description)

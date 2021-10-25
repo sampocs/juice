@@ -20,10 +20,10 @@ def parse_kickoff_touchback(play_description: str) -> re.Match or None:
     """
     expressions = {
         'kicker': pc.PLAYER,
-        'distance': r"|".join(pc.DISTANCES)
+        'kick_distance': r"|".join(pc.DISTANCES)
     }
 
-    pattern = r"%(kicker)s kicks off %(distance)s, touchback" % core.wrap_expressions(expressions)
+    pattern = r"%(kicker)s kicks off %(kick_distance)s, touchback" % core.wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -42,22 +42,22 @@ def parse_kickoff_returned(play_description: str) -> re.Match or None:
         returns: {
             "kicker": "Robbie Gould", 
             "kick_distance": "73 yards", 
-            "returner": "Cordarrelle Patterson",
-            "return_distance": "54 yards",
+            "kick_returner": "Cordarrelle Patterson",
+            "kick_return_distance": "54 yards",
             "tackler": None
         }
     """
     expressions = {
         'kicker': pc.PLAYER,
         'kick_distance': r"|".join(pc.DISTANCES),
-        'returner': pc.PLAYER,
-        'return_distance': r"|".join(pc.DISTANCES),
+        'kick_returner': pc.PLAYER,
+        'kick_return_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(returner)s for %(return_distance)s%(tackler)s" % expressions
+    pattern = r"%(kicker)s kicks off %(kick_distance)s, returned by %(kick_returner)s for %(kick_return_distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
 
@@ -88,6 +88,32 @@ def parse_kickoff_out_of_bounds(play_description: str) -> re.Match or None:
     return re.search(pattern, play_description)
 
 
+def parse_onside_kick(play_description: str) -> re.Match or None:
+    """
+    Given a play by play description, if it's a ONSIDE_KICK,
+    returns the regex match dictionary for each piece of information in the description
+    Otherwise, returns None
+
+    ONSIDE_KICK should be of the form:
+        {Player Name} kicks onside {distance}, returned by {Player Name} for {distance}
+
+    Example: 
+        play_description = "Robbie Gould kicks onside 9 yards, returned by Cordarrelle Patterson for 5 yards"
+        returns: {
+            "kicker": "Robbie Gould",
+            "kick_distance": "9 yards"
+        }
+    """
+    expressions = {
+        'kicker': pc.PLAYER,
+        'kick_distance': r"|".join(pc.DISTANCES)
+    }
+
+    pattern = r"%(kicker)s kicks onside %(kick_distance)s" % core.wrap_expressions(expressions)
+
+    return re.search(pattern, play_description)
+
+
 def parse_field_goal(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a FIELD_GOAL,
@@ -101,17 +127,17 @@ def parse_field_goal(play_description: str) -> re.Match or None:
         play_description = "Robbie Gould 43 yard field goal good"
         returns: {
             "kicker": "Robbie Gould", 
-            "distance": "43 yards", 
-            "status": "good"
+            "field_goal_distance": "43 yards", 
+            "field_goal_status": "good"
         }
     """
     expressions = {
         'kicker': pc.PLAYER,
-        'distance': r"|".join(pc.DISTANCES),
+        'field_goal_distance': r"|".join(pc.DISTANCES),
         'status': r"|".join(pc.FIELD_GOAL_STATUSES)
     }
 
-    pattern = r"%(kicker)s %(distance)s field goal %(status)s" % core.wrap_expressions(expressions)
+    pattern = r"%(kicker)s %(field_goal_distance)s field goal %(status)s" % core.wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -129,7 +155,7 @@ def parse_extra_point(play_description: str) -> re.Match or None:
         play_description = "Robbie Gould kicks extra point good"
         returns: {
             "kicker": "Robbie Gould", 
-            "status": "good"
+            "extra_point_status": "good"
         }
     """
     expressions = {
@@ -160,10 +186,10 @@ def parse_punt_out_of_bounds(play_description: str) -> re.Match or None:
     """
     expressions = {
         'punter': pc.PLAYER,
-        'distance': r"|".join(pc.DISTANCES)
+        'punt_distance': r"|".join(pc.DISTANCES)
     }
 
-    pattern = r"%(punter)s punts %(distance)s out of bounds" % core.wrap_expressions(expressions)
+    pattern = r"%(punter)s punts %(punt_distance)s out of bounds" % core.wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -181,17 +207,17 @@ def parse_punt_downed(play_description: str) -> re.Match or None:
         play_description = "Pat O'Donnell punts 45 yards downed by Cordarrelle Patterson"
         returns: {
             "punter": "Pat O'Donnell", 
-            "distance": "45 yards",
+            "punt_distance": "45 yards",
             "downer": "Cordarrelle Patterson"
         }
     """
     expressions = {
         'punter': pc.PLAYER,
-        'distance': r"|".join(pc.DISTANCES),
+        'punt_distance': r"|".join(pc.DISTANCES),
         'downer': pc.PLAYER
     }
 
-    pattern = r"%(punter)s punts %(distance)s downed by %(downer)s" % core.wrap_expressions(expressions)
+    pattern = r"%(punter)s punts %(punt_distance)s downed by %(downer)s" % core.wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -210,18 +236,18 @@ def parse_punt_fair_catch(play_description: str) -> re.Match or None:
         returns: {
             "punter": "Pat O'Donnell", 
             "punt_distance": "45 yards",
-            "returner": "Cordarrelle Patterson",
+            "punt_returner": "Cordarrelle Patterson",
             "yardage": "DET-10"
         }
     """
     expressions = {
         'punter': pc.PLAYER,
         'punt_distance': r"|".join(pc.DISTANCES),
-        'returner': pc.PLAYER,
+        'punt_returner': pc.PLAYER,
         'yardage': pc.YARDAGE
     }
 
-    pattern = r"%(punter)s punts %(punt_distance)s, fair catch by %(returner)s at %(yardage)s" % core.wrap_expressions(expressions)
+    pattern = r"%(punter)s punts %(punt_distance)s, fair catch by %(punt_returner)s at %(yardage)s" % core.wrap_expressions(expressions)
 
     return re.search(pattern, play_description)
 
@@ -240,7 +266,7 @@ def parse_punt_returned(play_description: str) -> re.Match or None:
         returns: {
             "punter": "Pat O'Donnell", 
             "punt_distance": "45 yards",
-            "returner": "Cordarrelle Patterson",
+            "punt_returner": "Cordarrelle Patterson",
             "return_distance": "27 yards",
             "tackler": None
         }
@@ -248,14 +274,14 @@ def parse_punt_returned(play_description: str) -> re.Match or None:
     expressions = {
         'punter': pc.PLAYER,
         'punt_distance': r"|".join(pc.DISTANCES),
-        'returner': pc.PLAYER,
-        'return_distance': r"|".join(pc.DISTANCES),
+        'punt_returner': pc.PLAYER,
+        'punt_return_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"%(punter)s punts %(punt_distance)s, returned by %(returner)s for %(return_distance)s%(tackler)s" % expressions
+    pattern = r"%(punter)s punts %(punt_distance)s, returned by %(punt_returner)s for %(punt_return_distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
 
@@ -341,28 +367,3 @@ def parse_punt_blocked(play_description: str) -> re.Match or None:
 
     return re.search(pattern, play_description)
 
-
-def parse_onside_kick(play_description: str) -> re.Match or None:
-    """
-    Given a play by play description, if it's a ONSIDE_KICK,
-    returns the regex match dictionary for each piece of information in the description
-    Otherwise, returns None
-
-    ONSIDE_KICK should be of the form:
-        {Player Name} kicks onside {distance}, returned by {Player Name} for {distance}
-
-    Example: 
-        play_description = "Robbie Gould kicks onside 9 yards, returned by Cordarrelle Patterson for 5 yards"
-        returns: {
-            "kicker": "Robbie Gould",
-            "kick_distance": "9 yards"
-        }
-    """
-    expressions = {
-        'kicker': pc.PLAYER,
-        'kick_distance': r"|".join(pc.DISTANCES)
-    }
-
-    pattern = r"%(kicker)s kicks onside %(kick_distance)s" % core.wrap_expressions(expressions)
-
-    return re.search(pattern, play_description)

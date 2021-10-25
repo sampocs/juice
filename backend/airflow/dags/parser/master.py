@@ -4,9 +4,27 @@ import pandas as pd
 class PlayTypes:
     RUN = 'RUN'
     PASS = 'PASS'
-    SPECIAL_TEAMS = 'SPECIAL_TEAMS'
+    KICKOFF = 'KICKOFF'
+    PUNT = 'PUNT'
+    FIELD_GOAL = 'FIELD_GOAL'
+    EXTRA_POINT = 'EXTRA_POINT'
     GAME_MANAGEMENT = 'GAME_MANAGEMENT'
     PENALTY = 'PENALTY'
+
+class KickTypes:
+    RETURNED = 'RETURNED'
+    OUT_OF_BOUNDS = 'OUT_OF_BOUNDS'
+    TOUCHBACK = 'TOUCHBACK'
+    ONSIDE = 'ONSIDE'
+
+class PuntTypes:
+    RETURNED = 'RETURNED'
+    OUT_OF_BOUNDS = 'OUT_OF_BOUNDS'
+    TOUCHBACK = 'TOUCHBACK'
+    DOWNED = 'DOWNED'
+    FAIR_CAUGHT = 'FAIR_CAUGHT'
+    BLOCKED = 'BLOCKED'
+    RECOVERED = 'RECOVERED'
 
 RUN_KEYS = [
     'running_back',
@@ -64,6 +82,30 @@ def distance_mapping(distance: str) -> int:
 def parse_pbp(df: pd.DataFrame) -> pd.DataFrame:
     play = df['detail']
     remaining_description = play
+
+    if misc.parse_timeout(play):
+        df['play_type'] = PlayTypes.GAME_MANAGEMENT
+        df['timeout'] = True
+        df['spike'] = False
+        df['kneel'] = False
+        
+    elif misc.parse_spike(play):
+        df['play_type'] = PlayTypes.GAME_MANAGEMENT
+        df['timeout'] = False
+        df['spike'] = True
+        df['kneel'] = False
+
+    elif misc.parse_kneel(play):
+        df['play_type'] = PlayTypes.GAME_MANAGEMENT
+        df['timeout'] = False
+        df['spike'] = False
+        df['kneel'] = True
+
+    else:
+        df['timeout'] = False
+        df['spike'] = False
+        df['kneel'] = False
+
 
     if run.parse_run_play(play):
         match = run.parse_run_play(play).groupdict()
@@ -158,6 +200,145 @@ def parse_pbp(df: pd.DataFrame) -> pd.DataFrame:
         df['tackler'] = [match['sacker1'], match['sacker2']]
         df['sacked'] = True
         remaining_description = play[defense.parse_sack_half(play).end():]
+
+
+    elif special_teams.parse_kickoff_returned(play):
+        match = special_teams.parse_kickoff_returned(play)
+        df['play_type'] = PlayTypes.KICKOFF
+        df['kicker'] = match['kicker']
+        df['kick_type'] = KickTypes.RETURNED
+        df['kick_distance'] = match['kick_distance']
+        df['kick_returner'] = match['kick_returner']
+        df['kick_return_distance'] = match['kick_return_distance']
+        df['tackler'] = match['tackler'].split(' and ') if match['tackler'] else []
+        remaining_description = play[special_teams.parse_kickoff_returned(play).end():]  
+
+    elif special_teams.parse_kickoff_out_of_bounds(play):
+        match = special_teams.parse_kickoff_out_of_bounds(play)
+        df['play_type'] = PlayTypes.KICKOFF
+        df['kicker'] = match['kicker']
+        df['kick_type'] = KickTypes.OUT_OF_BOUNDS
+        df['kick_distance'] = match['kick_distance']
+        df['kick_returner'] = None
+        df['kick_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_kickoff_out_of_bounds(play).end():]  
+
+    elif special_teams.parse_kickoff_touchback(play):
+        match = special_teams.parse_kickoff_touchback(play)
+        df['play_type'] = PlayTypes.KICKOFF
+        df['kicker'] = match['kicker']
+        df['kick_type'] = KickTypes.TOUCHBACK
+        df['kick_distance'] = match['kick_distance']
+        df['kick_returner'] = None
+        df['kick_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_kickoff_touchback(play).end():]  
+
+    elif special_teams.parse_onside_kick(play):
+        match = special_teams.parse_onside_kick(play)
+        df['play_type'] = PlayTypes.KICKOFF
+        df['kicker'] = match['kicker']
+        df['kick_type'] = KickTypes.ONSIDE
+        df['kick_distance'] = match['kick_distance']
+        df['kick_returner'] = None
+        df['kick_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_onside_kick(play).end():]  
+
+    elif special_teams.parse_field_goal(play):
+        match = special_teams.parse_field_goal(play)
+        df['play_type'] = PlayTypes.FIELD_GOAL
+        df['kicker'] = match['kicker']
+        df['field_goal_made'] = (match['status'] == 'good')
+        df['field_goal_distance'] = match['field_goal_distance']
+        df['field_goal_blocked'] = 'blocked' in play
+        remaining_description = play[special_teams.parse_field_goal(play).end():]  
+
+    elif special_teams.parse_extra_point(play):
+        match = special_teams.parse_extra_point(play)
+        df['play_type'] = PlayTypes.EXTRA_POINT
+        df['kicker'] = match['kicker']
+        df['extra_point_made'] = (match['status'] == 'good')
+        df['extra_point_blocked'] = 'blocked' in play
+        remaining_description = play[special_teams.parse_extra_point(play).end():]  
+
+    elif special_teams.parse_punt_returned(play):
+        match = special_teams.parse_punt_returned(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.RETURNED
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = match['punt_returner']
+        df['punt_return_distance'] = match['punt_return_distance']
+        df['tackler'] = match['tackler'].split(' and ') if match['tackler'] else []
+        remaining_description = play[special_teams.parse_punt_returned(play).end():] 
+    
+    elif special_teams.parse_punt_downed(play):
+        match = special_teams.parse_punt_downed(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.DOWNED
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = None
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_downed(play).end():] 
+
+    elif special_teams.parse_punt_fair_catch(play):
+        match = special_teams.parse_punt_fair_catch(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.FAIR_CAUGHT
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = match['punt_returner']
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_fair_catch(play).end():] 
+
+    elif special_teams.parse_punt_touchback(play):
+        match = special_teams.parse_punt_touchback(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.TOUCHBACK
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = None
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_touchback(play).end():] 
+    
+    elif special_teams.parse_punt_out_of_bounds(play):
+        match = special_teams.parse_punt_out_of_bounds(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.OUT_OF_BOUNDS
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = None
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_out_of_bounds(play).end():] 
+
+    elif special_teams.parse_punt_blocked(play):
+        match = special_teams.parse_punt_blocked(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.BLOCKED
+        df['punt_distance'] = None
+        df['punt_returner'] = None
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_blocked(play).end():] 
+
+    elif special_teams.parse_punt_recovered(play):
+        match = special_teams.parse_punt_recovered(play)
+        df['play_type'] = PlayTypes.PUNT
+        df['punter'] = match['punter']
+        df['punt_type'] = PuntTypes.RECOVERED
+        df['punt_distance'] = match['punt_distance']
+        df['punt_returner'] = match['recoverer']
+        df['punt_return_distance'] = None
+        df['tackler'] = None
+        remaining_description = play[special_teams.parse_punt_recovered(play).end():] 
 
     if 'play_type' in df and df['play_type'] != PlayTypes.GAME_MANAGEMENT:
         if defense.parse_fumble(remaining_description):
