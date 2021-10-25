@@ -65,12 +65,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards (tackle by Davante Adams)'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
+            'pass_direction': 'short right',
+            'pass_defended_by': 'Jaylon Johnson',
             'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': '45 yards',
+            'interception_return_distance': '45 yards',
             'tackler': 'Davante Adams'
         }
         match = defense.parse_interception(description)
@@ -84,12 +84,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10 and returned for 45 yards'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
+            'pass_direction': 'short right',
+            'pass_defended_by': 'Jaylon Johnson',
             'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': '45 yards',
+            'interception_return_distance': '45 yards',
             'tackler': None
         }
         match = defense.parse_interception(description)
@@ -103,12 +103,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
+            'pass_direction': 'short right',
+            'pass_defended_by': 'Jaylon Johnson',
             'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'interception_return_distance': None,
             'tackler': None
         }
         match = defense.parse_interception(description)
@@ -122,12 +122,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass short right (defended by Jaylon Johnson) is intercepted by Eddie Jackson at CHI-10'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': 'Jaylon Johnson',
+            'pass_direction': 'short right',
+            'pass_defended_by': 'Jaylon Johnson',
             'receiver': None,
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'interception_return_distance': None,
             'tackler': None
         }
         match = defense.parse_interception(description)
@@ -141,12 +141,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass short right intended for Davante Adams is intercepted by Eddie Jackson at CHI-10'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': 'short right',
-            'defender': None,
+            'pass_direction': 'short right',
+            'pass_defended_by': None,
             'receiver': 'Davante Adams',
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'interception_return_distance': None,
             'tackler': None
         }
         match = defense.parse_interception(description)
@@ -163,12 +163,12 @@ class TestParseInterception:
         description = 'Aaron Rodgers pass is intercepted by Eddie Jackson at CHI-10'
         expected = {
             'quarterback': 'Aaron Rodgers',
-            'direction': None,
-            'defender': None,
+            'pass_direction': None,
+            'pass_defended_by': None,
             'receiver': None,
-            'intercepter': 'Eddie Jackson',
+            'intercepted_by': 'Eddie Jackson',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'interception_return_distance': None,
             'tackler': None
         }
         match = defense.parse_interception(description)
@@ -191,10 +191,10 @@ class TestParseFumble:
         description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards (tackle by Davante Adams)'
         expected = {
             'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
+            'fumble_forced_by': 'Khalil Mack',
+            'fumble_recovered_by': 'Akiem Hicks',
             'yardage': 'CHI-10',
-            'return_distance': '-10 yards',
+            'fumble_return_distance': '-10 yards',
             'tackler': 'Davante Adams'
         }
         match = defense.parse_fumble(description)
@@ -208,10 +208,10 @@ class TestParseFumble:
         description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10 and returned for -10 yards'
         expected = {
             'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
+            'fumble_forced_by': 'Khalil Mack',
+            'fumble_recovered_by': 'Akiem Hicks',
             'yardage': 'CHI-10',
-            'return_distance': '-10 yards',
+            'fumble_return_distance': '-10 yards',
             'tackler': None
         }
         match = defense.parse_fumble(description)
@@ -225,10 +225,10 @@ class TestParseFumble:
         description = 'Aaron Rodgers fumbles (forced by Khalil Mack), recovered by Akiem Hicks at CHI-10'
         expected = {
             'fumbler': 'Aaron Rodgers',
-            'forcer': 'Khalil Mack',
-            'recoverer': 'Akiem Hicks',
+            'fumble_forced_by': 'Khalil Mack',
+            'fumble_recovered_by': 'Akiem Hicks',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'fumble_return_distance': None,
             'tackler': None
         }
         match = defense.parse_fumble(description)
@@ -242,10 +242,10 @@ class TestParseFumble:
         description = 'Aaron Rodgers fumbles, recovered by Akiem Hicks at CHI-10'
         expected = {
             'fumbler': 'Aaron Rodgers',
-            'forcer': None,
-            'recoverer': 'Akiem Hicks',
+            'fumble_forced_by': None,
+            'fumble_recovered_by': 'Akiem Hicks',
             'yardage': 'CHI-10',
-            'return_distance': None,
+            'fumble_return_distance': None,
             'tackler': None
         }
         match = defense.parse_fumble(description)

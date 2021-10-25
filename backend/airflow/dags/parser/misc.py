@@ -1,40 +1,42 @@
 import re
 from . import play_components as pc
 from . import core
+from typing import List
 
 
-def parse_penalty(play_description: str) -> re.Match or None:
+def parse_penalty(play_description: str) -> List[re.Match]:
     """
     Given a play by play description, if it's a PENALTY,
     returns the regex match dictionary for each piece of information in the description
     Otherwise, returns None
 
     PENALTY should be of the form:
-        Penalty on {Player Name}: {penalty}, {distance} [(no play)]
+        Penalty on {Player Name}: {penalty}, {distance} ({response}) [(no play)]
 
     Example: 
-        play_description = "Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards"
+        play_description = "Penalty on Ndamukong Suh: Unnecessary Roughness, 15 yards (accepted)"
         returns: {
-            "player": "Ndamukong Suh", 
-            "penalty": "Unnecessary Roughness",
-            "distance": "15 yards",
+            "penalty_on": "Ndamukong Suh", 
+            "penalty_type": "Unnecessary Roughness",
+            "penalty_distance": "15 yards",
+            "penalty_response": "accepted",
             "no_play": None
         }
     """
     expressions = {
-        'player': pc.PLAYER,
-        'penalty': pc.PENALTY,
-        'distance': r"|".join(pc.DISTANCES),
-        'response': r"|".join(pc.PENALTY_RESPONSES),
+        'penalty_on': pc.PLAYER,
+        'penalty_type': pc.PENALTY,
+        'penalty_distance': r"|".join(pc.DISTANCES),
+        'penalty_response': r"|".join(pc.PENALTY_RESPONSES),
         'no_play': pc.NO_PLAY
     }
     expressions = core.wrap_expressions(expressions)
-    expressions['response'] = core.make_optional(r"\(%s\)" % expressions['response'])
+    expressions['penalty_response'] = core.make_optional(r"\(%s\)" % expressions['penalty_response'])
     expressions['no_play'] = core.make_optional(r"\(%s\)" % expressions['no_play'])
 
-    pattern = r"Penalty on %(player)s: %(penalty)s, %(distance)s%(response)s%(no_play)s" % expressions
+    pattern = r"Penalty on %(penalty_on)s: %(penalty_type)s, %(penalty_distance)s%(penalty_response)s%(no_play)s" % expressions
 
-    return re.search(pattern, play_description)
+    return list(re.finditer(pattern, play_description))
 
 
 def parse_timeout(play_description: str) -> re.Match or None:

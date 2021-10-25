@@ -1,9 +1,9 @@
-PLAYER = r"[A-Z][a-zA-Z, .'-]*[a-zA-Z]" # can't end with a space, must start w/ capital
+PLAYER = r"[A-Z][a-zA-Z .'-]*[a-zA-Z]" # can't end with a space, must start w/ capital
 
 # This is for matching run plays with no direction, because if the above player expression
 # is used, many other play types will match the "RUN_NO_DIRECTION" regex. So we instead 
 # assume that the player only has a first and last name to the expression doesn't get greedy
-STRICT_PLAYER = r"[a-zA-Z,.'-]+ [a-zA-Z,.'-]+" 
+STRICT_PLAYER = r"[a-zA-Z.'-]+ [a-zA-Z.'-]+" 
 
 RUN_DIRECTIONS = [
     r"up the middle", 
@@ -22,7 +22,7 @@ PASS_DIRECTIONS = [
     r"short right",
     r"deep left",
     r"deep middle",
-    r"deep right",
+    r"deep right"
 ]
 
 # Ex: 40 yards

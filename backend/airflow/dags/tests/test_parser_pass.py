@@ -16,10 +16,10 @@ class TestParsePassComplete:
         """
         description = 'Justin Fields pass complete deep right to Allen Robinson for 45 yards'
         expected = {
-            'passer': 'Justin Fields',
-            'direction': 'deep right',
+            'quarterback': 'Justin Fields',
+            'pass_direction': 'deep right',
             'receiver': 'Allen Robinson',
-            'distance': '45 yards',
+            'pass_distance': '45 yards',
             'tackler': None
         }
         match = pass_.parse_pass_complete_play(description)
@@ -32,10 +32,10 @@ class TestParsePassComplete:
         """
         description = 'Justin Fields pass complete to Allen Robinson for 45 yards'
         expected = {
-            'passer': 'Justin Fields',
-            'direction': None,
+            'quarterback': 'Justin Fields',
+            'pass_direction': None,
             'receiver': 'Allen Robinson',
-            'distance': '45 yards',
+            'pass_distance': '45 yards',
             'tackler': None
         }
         match = pass_.parse_pass_complete_play(description)
@@ -48,10 +48,10 @@ class TestParsePassComplete:
         """
         description = 'Justin Fields pass complete deep right to Allen Robinson for 45 yards (tackle by Jalen Ramsey)'
         expected = {
-            'passer': 'Justin Fields',
-            'direction': 'deep right',
+            'quarterback': 'Justin Fields',
+            'pass_direction': 'deep right',
             'receiver': 'Allen Robinson',
-            'distance': '45 yards',
+            'pass_distance': '45 yards',
             'tackler': 'Jalen Ramsey'
         }
         match = pass_.parse_pass_complete_play(description)
@@ -64,10 +64,10 @@ class TestParsePassComplete:
         """
         description = 'Justin Fields pass complete deep right to Allen Robinson for 45 yards, touchdown'
         expected = {
-            'passer': 'Justin Fields',
-            'direction': 'deep right',
+            'quarterback': 'Justin Fields',
+            'pass_direction': 'deep right',
             'receiver': 'Allen Robinson',
-            'distance': '45 yards',
+            'pass_distance': '45 yards',
             'tackler': None
         }
         match = pass_.parse_pass_complete_play(description)
@@ -89,10 +89,10 @@ class TestParsePassIncomplete:
         """
         description = 'Aaron Rodgers pass incomplete short right intended for Davante Adams'
         expected = {
-            'passer': 'Aaron Rodgers',
-            'direction': 'short right',
+            'quarterback': 'Aaron Rodgers',
+            'pass_direction': 'short right',
             'receiver': 'Davante Adams',
-            'defender': None
+            'pass_defended_by': None
         }
         match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)
@@ -104,10 +104,10 @@ class TestParsePassIncomplete:
         """
         description = 'Aaron Rodgers pass incomplete intended for Davante Adams'
         expected = {
-            'passer': 'Aaron Rodgers',
-            'direction': None,
+            'quarterback': 'Aaron Rodgers',
+            'pass_direction': None,
             'receiver': 'Davante Adams',
-            'defender': None
+            'pass_defended_by': None
         }
         match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)
@@ -119,18 +119,18 @@ class TestParsePassIncomplete:
         """
         description1 = 'Aaron Rodgers pass incomplete short right'
         expected1 = {
-            'passer': 'Aaron Rodgers',
-            'direction': 'short right',
+            'quarterback': 'Aaron Rodgers',
+            'pass_direction': 'short right',
             'receiver': None,
-            'defender': None
+            'pass_defended_by': None
         }
 
         description2 = 'Aaron Rodgers pass incomplete'
         expected2 = {
-            'passer': 'Aaron Rodgers',
-            'direction': None,
+            'quarterback': 'Aaron Rodgers',
+            'pass_direction': None,
             'receiver': None,
-            'defender': None
+            'pass_defended_by': None
         }
 
         match1 = pass_.parse_pass_incomplete_play(description1)
@@ -146,10 +146,10 @@ class TestParsePassIncomplete:
         """
         description = 'Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)'
         expected = {
-            'passer': 'Aaron Rodgers',
-            'direction': 'short right',
+            'quarterback': 'Aaron Rodgers',
+            'pass_direction': 'short right',
             'receiver': 'Davante Adams',
-            'defender': 'Jaylon Johnson'
+            'pass_defended_by': 'Jaylon Johnson'
         }
         match = pass_.parse_pass_incomplete_play(description)
         assert match and (match.groupdict() == expected)

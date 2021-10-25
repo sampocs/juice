@@ -180,7 +180,7 @@ class TestPunt:
         """
         Test that the PUNT_OUT_OF_BOUNDS play parser matches out of bounds punts
         """
-        play_examples.check_across_all_examples('PUNT_OUT_OF_BOUNDS', special_teams.parse_punt_out)
+        play_examples.check_across_all_examples('PUNT_OUT_OF_BOUNDS', special_teams.parse_punt_out_of_bounds)
 
 
     def test_punt_downed_all_examples(self):
@@ -234,7 +234,7 @@ class TestPunt:
             'punter': "Pat O'Donnell",
             'distance': '45 yards'
         }
-        match = special_teams.parse_punt_out(description)
+        match = special_teams.parse_punt_out_of_bounds(description)
         assert match and (match.groupdict() == expected)
 
 

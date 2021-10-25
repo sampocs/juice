@@ -55,14 +55,14 @@ def replace_defender_with_defended_event(expressions: dict) -> dict:
     string that indicates a defended event
     This means adding the full "defended by" string and making the whole string optional
 
-    Ex: {'defender': r"(P?<defender>{defender_regex}"}
-        => {'defender': r"( (defended by (P?<tackler>{defender_regex}))?"}
+    Ex: {'pass_defended_by': r"(P?<pass_defended_by>{defender_regex}"}
+        => {'pass_defended_by': r"( (defended by (P?<pass_defended_by>{defender_regex}))?"}
     """
-    assert 'defender' in expressions.keys(), \
-        'Must supply the regex for the defender. "defender" key must be present in expressions dict'
+    assert 'pass_defended_by' in expressions.keys(), \
+        'Must supply the regex for the pass_defended_by. "pass_defended_by" key must be present in expressions dict'
 
-    defender_regex = r"\(defended by %s\)" % expressions['defender']
-    expressions['defender'] = make_optional(defender_regex)
+    defender_regex = r"\(defended by %s\)" % expressions['pass_defended_by']
+    expressions['pass_defended_by'] = make_optional(defender_regex)
 
     return expressions
 
@@ -91,19 +91,19 @@ def replace_forcer_with_forced_event(expressions: dict) -> dict:
     string that indicates a forced fumble event
     This means adding the full "forced by" string and making the whole string optional
 
-    Ex: {'forcer': r"(P?<forcer>{forcer_regex}"}
-        => {'forcer': r"( (forced by (P?<forcer>{forcer_regex}))?"}
+    Ex: {'fumble_forced_by': r"(P?<fumble_forced_by>{forcer_regex}"}
+        => {'fumble_forced_by': r"( (forced by (P?<fumble_forced_by>{forcer_regex}))?"}
     """
-    assert 'forcer' in expressions.keys(), \
-        'Must supply the regex for the forcer. "forcer" key must be present in expressions dict'
+    assert 'fumble_forced_by' in expressions.keys(), \
+        'Must supply the regex for the fumble_forced_by. "fumble_forced_by" key must be present in expressions dict'
 
-    forcer_regex = r"\(forced by %s\)" % expressions['forcer']
-    expressions['forcer'] = make_optional(forcer_regex)
+    forcer_regex = r"\(forced by %s\)" % expressions['fumble_forced_by']
+    expressions['fumble_forced_by'] = make_optional(forcer_regex)
 
     return expressions
 
 
-def replace_return_distance_with_return_event(expressions: dict) -> dict:
+def replace_return_distance_with_return_event(return_distance_key: str, expressions: dict) -> dict:
     """
     Given a dict with the regex for a returned fumble distance, replaces the expression with the full optional
     string that indicates a returned event
@@ -112,10 +112,10 @@ def replace_return_distance_with_return_event(expressions: dict) -> dict:
     Ex: {'return_distance': r"(P?<return_distance>{distance_regex}"}
         => {'return_distance': r"( and returned for (P?<return_distance>{distance_regex})?"}
     """
-    assert 'return_distance' in expressions.keys(), \
-        'Must supply the regex for the return distance. "return_distance" key must be present in expressions dict'
+    assert return_distance_key in expressions.keys(), \
+        f'Must supply the regex for the return distance key. "{return_distance_key}" key must be present in expressions dict'
 
-    distance_regex = r"and returned for (%s)" % expressions['return_distance']
-    expressions['return_distance'] = make_optional(distance_regex)
+    distance_regex = r"and returned for (%s)" % expressions[return_distance_key]
+    expressions[return_distance_key] = make_optional(distance_regex)
 
     return expressions

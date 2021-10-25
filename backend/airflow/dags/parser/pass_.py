@@ -14,24 +14,25 @@ def parse_pass_complete_play(play_description: str) -> re.Match or None:
     Example: 
         play_description = "Justin Fields pass complete deep right to Allen Robinson for 45 yards (tackle by Jalen Ramsey)"
         returns: {
-            "runner": "Justin Fields", 
-            "direction": "deep right", 
-            "distance": "45 yards", 
+            "quarterback": "Justin Fields", 
+            "pass_direction": "deep right", 
+            "receiver": "Allen Robinson",
+            "pass_distance": "45 yards", 
             "tackler": Jalen Ramsey
         }
     """
     expressions = {
-        'passer': pc.PLAYER,
-        'direction': r"|".join(pc.PASS_DIRECTIONS),
+        'quarterback': pc.PLAYER,
+        'pass_direction': r"|".join(pc.PASS_DIRECTIONS),
         'receiver': pc.PLAYER,
-        'distance': r"|".join(pc.DISTANCES),
+        'pass_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_tackler_with_tackle_event(expressions)
-    expressions['direction'] = core.make_optional(expressions['direction'])
+    expressions['pass_direction'] = core.make_optional(expressions['pass_direction'])
 
-    pattern = r"%(passer)s pass complete%(direction)s to %(receiver)s for %(distance)s%(tackler)s" % expressions
+    pattern = r"%(quarterback)s pass complete%(pass_direction)s to %(receiver)s for %(pass_distance)s%(tackler)s" % expressions
 
     return re.search(pattern, play_description)
 
@@ -48,23 +49,23 @@ def parse_pass_incomplete_play(play_description: str) -> re.Match or None:
     Example: 
         play_description = "Aaron Rodgers pass incomplete short right intended for Davante Adams (defended by Jaylon Johnson)"
         returns: {
-            "runner": "Justin Fields", 
-            "direction": "deep right", 
-            "distance": "45 yards", 
-            "tackler": "Jalen Ramsey"
+            "quarterback": "Aaron Rodgers", 
+            "pass_direction": "short right", 
+            "receiver": "Davante Adams", 
+            "pass_defended_by": "Jaylon Johnson"
         }
     """
     expressions = {
-        'passer': pc.PLAYER,
-        'direction': r"|".join(pc.PASS_DIRECTIONS),
+        'quarterback': pc.PLAYER,
+        'pass_direction': r"|".join(pc.PASS_DIRECTIONS),
         'receiver': pc.PLAYER,
-        'defender': pc.PLAYER
+        'pass_defended_by': pc.PLAYER
     }
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_defender_with_defended_event(expressions)
     expressions = core.replace_receiver_with_intended_event(expressions)
-    expressions['direction'] = core.make_optional(expressions['direction'])
+    expressions['pass_direction'] = core.make_optional(expressions['pass_direction'])
 
-    pattern = r"%(passer)s pass incomplete%(direction)s%(receiver)s%(defender)s" % expressions
+    pattern = r"%(quarterback)s pass incomplete%(pass_direction)s%(receiver)s%(pass_defended_by)s" % expressions
 
     return re.search(pattern, play_description)

@@ -23,9 +23,9 @@ class TestParseRun:
         """
         description = 'David Montgomery right tackle for 10 yards'
         expected = {
-            'runner': 'David Montgomery',
-            'direction': 'right tackle',
-            'distance': '10 yards',
+            'running_back': 'David Montgomery',
+            'run_direction': 'right tackle',
+            'run_distance': '10 yards',
             'tackler': None
         }
         match = run.parse_run_play(description)
@@ -38,9 +38,9 @@ class TestParseRun:
         """
         description = 'David Montgomery right guard for no gain'
         expected = {
-            'runner': 'David Montgomery',
-            'direction': 'right guard',
-            'distance': 'no gain',
+            'running_back': 'David Montgomery',
+            'run_direction': 'right guard',
+            'run_distance': 'no gain',
             'tackler': None
         }
         match = run.parse_run_play(description)
@@ -54,15 +54,15 @@ class TestParseRun:
         description1 = "David Montgomery up the middle for 30 yards (tackle by Aaron Donald)"
         description2 = "David Montgomery right end for 1 yard (tackle by Aaron Donald and Jalen Ramsey)"
         expected1 = {
-            'runner': 'David Montgomery',
-            'direction': 'up the middle',
-            'distance': '30 yards',
+            'running_back': 'David Montgomery',
+            'run_direction': 'up the middle',
+            'run_distance': '30 yards',
             'tackler': 'Aaron Donald'
         }
         expected2 = {
-            'runner': 'David Montgomery',
-            'direction': 'right end',
-            'distance': '1 yard',
+            'running_back': 'David Montgomery',
+            'run_direction': 'right end',
+            'run_distance': '1 yard',
             'tackler': 'Aaron Donald and Jalen Ramsey'
         }
         match1 = run.parse_run_play(description1)
@@ -78,9 +78,9 @@ class TestParseRun:
         """
         description = "David Montgomery left end for 30 yards, touchdown"
         expected = {
-            'runner': 'David Montgomery',
-            'direction': 'left end',
-            'distance': '30 yards',
+            'running_back': 'David Montgomery',
+            'run_direction': 'left end',
+            'run_distance': '30 yards',
             'tackler': None
         }
         match = run.parse_run_play(description)
@@ -93,8 +93,8 @@ class TestParseRun:
         """
         description = "David Montgomery for 30 yards"
         expected = {
-            'runner': 'David Montgomery',
-            'distance': '30 yards',
+            'running_back': 'David Montgomery',
+            'run_distance': '30 yards',
             'tackler': None
         }
         match = run.parse_run_no_direction_play(description)

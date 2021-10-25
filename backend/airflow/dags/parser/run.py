@@ -9,22 +9,22 @@ def parse_run_play(play_description: str) -> re.Match or None:
     Otherwise, returns None
 
     RUN plays should be of the form:
-        {Player Name} {direction} for {distance} [(tackle by {tackler})]
+        {Player Name} {run_direction} for {distance} [(tackle by {tackler})]
 
     Example: 
         play_description = "David Montgomery right tackle for 15 yards
         returns: {
-            "runner": "David Montgomery", 
-            "direction": "right tackle", 
-            "distance": "15 yards", 
+            "running_back": "David Montgomery", 
+            "run_direction": "right tackle", 
+            "run_distance": "15 yards", 
             "tackler": None
         }
     """
 
     expressions = {
-        'runner': pc.PLAYER,
-        'direction': r"|".join(pc.RUN_DIRECTIONS),
-        'distance': r"|".join(pc.DISTANCES),
+        'running_back': pc.PLAYER,
+        'run_direction': r"|".join(pc.RUN_DIRECTIONS),
+        'run_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
 
@@ -32,7 +32,7 @@ def parse_run_play(play_description: str) -> re.Match or None:
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"%(runner)s %(direction)s for %(distance)s%(tackler)s" % expressions
+    pattern = r"%(running_back)s %(run_direction)s for %(run_distance)s%(tackler)s" % expressions
     return re.search(pattern, play_description)
 
 
@@ -48,15 +48,15 @@ def parse_run_no_direction_play(play_description: str) -> re.Match or None:
     Example: 
         play_description = "David Montgomery for 15 yards
         returns: {
-            "runner": "David Montgomery", 
-            "distance": "15 yards", 
+            "running_back": "David Montgomery", 
+            "run_distance": "15 yards", 
             "tackler": None
         }
     """
 
     expressions = {
-        'runner': pc.STRICT_PLAYER,
-        'distance': r"|".join(pc.DISTANCES),
+        'running_back': pc.STRICT_PLAYER,
+        'run_distance': r"|".join(pc.DISTANCES),
         'tackler': pc.PLAYER
     }
 
@@ -64,5 +64,5 @@ def parse_run_no_direction_play(play_description: str) -> re.Match or None:
     expressions = core.wrap_expressions(expressions)
     expressions = core.replace_tackler_with_tackle_event(expressions)
 
-    pattern = r"^%(runner)s for %(distance)s%(tackler)s" % expressions
+    pattern = r"^%(running_back)s for %(run_distance)s%(tackler)s" % expressions
     return re.search(pattern, play_description)

@@ -142,7 +142,7 @@ def parse_extra_point(play_description: str) -> re.Match or None:
     return re.search(pattern, play_description)
 
 
-def parse_punt_out(play_description: str) -> re.Match or None:
+def parse_punt_out_of_bounds(play_description: str) -> re.Match or None:
     """
     Given a play by play description, if it's a PUNT_OUT_OF_BOUNDS,
     returns the regex match dictionary for each piece of information in the description
